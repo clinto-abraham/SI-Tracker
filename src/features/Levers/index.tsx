@@ -160,7 +160,7 @@ export default function LeverTabs() {
       </SwipeableViews>
       {fabs.map((fab, index) => (
         <Zoom
-          key={fab.color}
+          key={fab.color + index}
           in={value === index}
           timeout={transitionDuration}
           style={{
