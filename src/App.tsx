@@ -1,33 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-
-import LeverTabs from './features/Levers';
-import Navbar from './features/Navbar';
-import Form from './features/Forms';
-
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
-
+import LeverTabs from "./components/Levers";
+import Home from "./components/Home";
+import Form from "./components/Forms";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import BottomNavbar from "./components/BottomNavbar";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <BrowserRouter> 
-    <Routes>
-      <Route path="/" element={<Navbar />}>
-        <Route path="lever" element={<LeverTabs />} />
-        <Route path="form" element={<Form />} />
-    </Route>
-    </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="lever" element={<LeverTabs />} />
+          <Route path="form" element={<Form />} />
+        </Routes>
+        <BottomNavbar />
+      </BrowserRouter>
+    </>
   );
 }
 
 export default App;
 
-
-        // <img src={logo} className="App-logo" alt="logo" />
-        // <Counter /> 
+// <img src={logo} className="App-logo" alt="logo" />
+// <Counter />
