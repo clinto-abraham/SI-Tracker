@@ -1,4 +1,4 @@
-{"levers": [
+export const data =  [
     {
         "uuid": "e8b768be-391d-45e1-ad2a-a7162e2812e2",
         "version": "1",
@@ -4910,4 +4910,3 @@
         "description": "The blast furnace-basic oxygen furnace (BF-BOF) process is used to make over 95 percent of the world’s virgin steel. \nProcess: Feed consisting of iron ore and coke is prepared via pelletising and sintering, integrated with coke ovens. Feed is fed into a blast furnace, which undergoes a set of reactions ending in stripping iron ore of oxygen, thus producing molten iron (hot metal), at 1600-2000 degrees celsius. Hot metal (HM) is purified in a basic oxygen furnace (BOF) using pure oxygen, which reacts with carbon and ore impurities, generating heat. The excess heat made during BF-BOF production allows steelmakers to use up to 20 to 30 percent scrap steel as a feedstock, which is used as a coolant in the process and could also improve the economics of the process."
     }
 ]
-}
