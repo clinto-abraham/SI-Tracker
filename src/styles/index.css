@@ -27,3 +27,7 @@ code {
   color: red;
   
 }
+.date{
+  min-width: 200px;
+  min-height: 50px;
+}

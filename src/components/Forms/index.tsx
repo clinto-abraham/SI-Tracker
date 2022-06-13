@@ -12,8 +12,11 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
+// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import ModalForm from "../Modal";
 import RadioForm from "../Radio";
@@ -69,6 +72,8 @@ const Form = () => {
   const handleChangeDate = (newValue: Date | null) => {
     setValueDate(newValue);
   };
+
+  const [startDate, setStartDate] = React.useState(new Date());
 
   const handleChangeCurrency = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(event.target.value);
@@ -155,8 +160,30 @@ const Form = () => {
                     style={{ width: 200 }}
                   />
                 </Grid>
+
+                <Grid item xs={3} className={'grid'}>
+<DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} 
+dateFormat={'dd/MM/yyyy'}
+filterDate={(date:Date) => date.getDate() !== 6 && date.getDate() !== 0}
+isClearable
+ariaLabelledBy="Pick date"
+showYearDropdown
+className={'date'}
+/>
+</Grid>
+<Grid item xs={9} className={'grid'}>
+<DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} 
+dateFormat={'dd/MM/yyyy'}
+filterDate={(date:Date) => date.getDate() >= date.getDate()+1 && date.getDate() !== 0}
+isClearable
+ariaLabelledBy="Pick date"
+showYearDropdown
+className={'date'}
+/>
+</Grid>
               </Grid>
             </Grid>
+
 
             
             {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
