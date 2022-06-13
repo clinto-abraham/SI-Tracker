@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute" as "absolute",
@@ -19,20 +20,31 @@ const style = {
 };
 
 const ModalForm = (props: any) => {
+  const navigate = useNavigate();
   const { cancel, create } = props;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleCloseCancel = () => {
+    setOpen(false)
+    navigate('/lever')
+  }
+
+  const handleCloseConfirm = () => { 
+    setOpen(false)
+    navigate('/')
+  };
+
   return (
     <div>
       {cancel ? (
         <Button variant={"outlined"} onClick={handleOpen}>
-          Cancel{" "}
+          Cancel
         </Button>
       ) : null}
       {create ? (
         <Button variant={"contained"} onClick={handleOpen}>
-          {" "}
+          
           Create Project
         </Button>
       ) : null}
@@ -60,14 +72,12 @@ const ModalForm = (props: any) => {
                 : null}
             </Typography>
             {cancel ? (
-              <Button variant={"contained"} onClick={handleClose}>
-                {" "}
-                Confirm{" "}
+              <Button variant={"contained"} onClick={handleCloseCancel}>
+                Confirm
               </Button>
             ) : null}
             {create ? (
-              <Button variant={"contained"} onClick={handleClose}>
-                {" "}
+              <Button variant={"contained"} onClick={handleCloseConfirm}>
                 Confirm
               </Button>
             ) : null}
