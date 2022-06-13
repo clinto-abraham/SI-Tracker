@@ -12,6 +12,13 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Agriculture from "@mui/icons-material/Landscape";
+import Industry from "@mui/icons-material/Satellite";
+import Sector from "@mui/icons-material/Inventory";
+import Test from "@mui/icons-material/TaxiAlert";
+import Transport from "@mui/icons-material/Traffic";
+import Power from "@mui/icons-material/PowerTwoTone";
+import Dummy from "@mui/icons-material/AccountBalance";
 
 interface leverObj {
   lever: {
@@ -104,15 +111,29 @@ export default function LeverTabs() {
         (elem: any, index: number, Array: any[]) => elem.sector === element
       )
   );
-  console.log("SingleSectorElement",singleSectorElement);
-  const agri = leverData.filter((el: { sector: string; })=> el.sector === 'Agriculture')
-  const indus = leverData.filter((el: { sector: string; })=> el.sector === 'Industry')
-  const sect = leverData.filter((el: { sector: string; })=> el.sector === 'Sector')
-  const test = leverData.filter((el: { sector: string; })=> el.sector === 'Test')
-  const trans = leverData.filter((el: { sector: string; })=> el.sector === 'Transport')
-  const pow = leverData.filter((el: { sector: string; })=> el.sector === 'Power')
-  const dumy = leverData.filter((el: { sector: string; })=> el.sector === 'DuMmY')
-  
+  console.log("SingleSectorElement", singleSectorElement);
+  const agri = leverData.filter(
+    (el: { sector: string }) => el.sector === "Agriculture"
+  );
+  const indus = leverData.filter(
+    (el: { sector: string }) => el.sector === "Industry"
+  );
+  const sect = leverData.filter(
+    (el: { sector: string }) => el.sector === "Sector"
+  );
+  const test = leverData.filter(
+    (el: { sector: string }) => el.sector === "Test"
+  );
+  const trans = leverData.filter(
+    (el: { sector: string }) => el.sector === "Transport"
+  );
+  const pow = leverData.filter(
+    (el: { sector: string }) => el.sector === "Power"
+  );
+  const dumy = leverData.filter(
+    (el: { sector: string }) => el.sector === "DuMmY"
+  );
+
   return (
     <div>
       <Alert severity="info" sx={{ paddingTop: "70px" }}>
@@ -159,13 +180,43 @@ export default function LeverTabs() {
             variant="fullWidth"
             aria-label="action tabs example"
           >
-            {singleSector.map((element: string, index: number) => (
-              <Tab
-                label={element}
-                {...a11yProps(index)}
-                key={index + element}
-              />
-            ))}
+            {singleSector.map((element: string, index: number) => {
+              const Icon = (element: string) => {
+                switch (element) {
+                  case "Agriculture":
+                    return <Agriculture />;
+                  case "Industry":
+                    return <Industry />;
+                  case "Sector":
+                    return <Sector />;
+                  case "Test":
+                    return <Test />;
+                  case "Transport":
+                    return <Transport />;
+                  case "Power":
+                    return <Power />;
+                  case "Dummy":
+                    return <Dummy />;
+
+                  default:
+                    break;
+                }
+              };
+
+              const SectorTab = () => (
+                <>
+                  {Icon(element)}
+                  <Typography key={index + element}>{element}</Typography>
+                  <Typography variant="caption">0/{"0"} Selected </Typography>
+                </>
+              );
+              return (
+                <Tab
+                  label={<SectorTab />}
+                  {...a11yProps(index)}
+                />
+              );
+            })}
           </Tabs>
         </AppBar>
         <SwipeableViews
@@ -177,25 +228,25 @@ export default function LeverTabs() {
             <CheckboxLever leverData={agri} />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
-          <CheckboxLever leverData={indus} />
+            <CheckboxLever leverData={indus} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-          <CheckboxLever leverData={indus} />
+            <CheckboxLever leverData={indus} />
           </TabPanel>
           <TabPanel value={value} index={3} dir={theme.direction}>
-          <CheckboxLever leverData={sect} />
+            <CheckboxLever leverData={sect} />
           </TabPanel>
           <TabPanel value={value} index={4} dir={theme.direction}>
-          <CheckboxLever leverData={test} />
+            <CheckboxLever leverData={test} />
           </TabPanel>
           <TabPanel value={value} index={5} dir={theme.direction}>
-          <CheckboxLever leverData={trans} />
+            <CheckboxLever leverData={trans} />
           </TabPanel>
           <TabPanel value={value} index={6} dir={theme.direction}>
-          <CheckboxLever leverData={pow} />
+            <CheckboxLever leverData={pow} />
           </TabPanel>
           <TabPanel value={value} index={7} dir={theme.direction}>
-          <CheckboxLever leverData={dumy} />
+            <CheckboxLever leverData={dumy} />
           </TabPanel>
         </SwipeableViews>
       </Box>
