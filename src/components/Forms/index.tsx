@@ -9,17 +9,20 @@ import {
   Stack,
   TextareaAutosize,
   TextField,
+  TextFieldProps,
   Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns/index.d";
+
 import ModalForm from "../Modal";
 import RadioForm from "../Radio";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+// import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns/index.d";
 const currencies = [
   {
     value: "Dollar",
@@ -58,6 +61,15 @@ const Form = () => {
   const navigate = useNavigate();
   const [currency, setCurrency] = React.useState("Dollar");
   const [project, setProject] = React.useState("Loss of pay");
+  
+  const [valueDate, setValueDate] = React.useState<Date | null>(
+    new Date('2014-08-18T21:11:54'),
+  );
+
+  const handleChangeDate = (newValue: Date | null) => {
+    setValueDate(newValue);
+  };
+
   const handleChangeCurrency = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(event.target.value);
   };
@@ -146,30 +158,37 @@ const Form = () => {
               </Grid>
             </Grid>
 
-            {/* 
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            
+            {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
            <Grid item xs={3} className={'grid'}>
-              
+           <DesktopDatePicker
+          label="Date desktop"
+          inputFormat="MM/dd/yyyy"
+          value={valueDate}
+          onChange={handleChangeDate}
+          renderInput={(params: JSX.IntrinsicAttributes & TextFieldProps) => <TextField {...params} />}
+        />
+
                 <DatePicker
-                  value={value}
+                  value={valueDate}
                   onChange={(newValue) => {
-                    setValue(newValue);
+                    setValueDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
                 </Grid>
                 <Grid item xs={9} className={'grid'}>
                 <DatePicker
-                  value={value}
+                  value={valueDate}
                   onChange={(newValue) => {
-                    setValue(newValue);
+                    setValueDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
               
             </Grid>
-            </LocalizationProvider>
-             */}
+            </LocalizationProvider> */}
+            
           </Grid>
           <Divider />
           <Grid container alignItems="center">
