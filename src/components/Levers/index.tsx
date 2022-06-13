@@ -47,7 +47,7 @@ interface leverObj {
 }
 interface store {
   state: {}[];
-  lever: {}[leverObj];
+  lever: any;
   levers: any;
 }
 interface TabPanelProps {
