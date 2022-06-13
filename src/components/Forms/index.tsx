@@ -7,7 +7,7 @@ import {
   MenuItem,
   Paper,
   Stack,
-  styled,
+  TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,15 +16,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns/index.d";
 import ModalForm from "../Modal";
 import RadioForm from "../Radio";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: "center",
-//   color: theme.palette.text.secondary,
-// }));
 
 const currencies = [
   {
@@ -61,6 +55,7 @@ const projectTypes = [
 ];
 
 const Form = () => {
+  const navigate = useNavigate();
   const [currency, setCurrency] = React.useState("Dollar");
   const [project, setProject] = React.useState("Loss of pay");
   const handleChangeCurrency = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +78,12 @@ const Form = () => {
           marginRight: 3,
         }}
       >
+        <Button
+          onClick={() => navigate("/lever")}
+          startIcon={<ArrowBackIcon />}
+        >
+          Back to explore levers
+        </Button>
         <Typography variant="h4" gutterBottom component="div">
           Add Project Info
         </Typography>
@@ -109,44 +110,66 @@ const Form = () => {
               <Typography> Basic Details</Typography>
             </Grid>
             <Grid item xs={10}>
-              <TextField required id="outlined-required" label="Project Name" />
-              <TextField
-                id="outlined-select-currency"
-                select
-                label="Select"
-                value={project}
-                onChange={handleChangeProject}
-                helperText="Please select project type"
-              >
-                {projectTypes.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Grid container>
+                <Grid item xs={3} className={"grid"}>
+                  <TextField
+                    required
+                    id="outlined-required"
+                    label="Project Name"
+                  />
+                </Grid>
+                <Grid item xs={9} className={"grid"}>
+                  <TextField
+                    id="outlined-select-currency"
+                    select
+                    label="Project type"
+                    value={project}
+                    onChange={handleChangeProject}
+                    helperText="Please select project type"
+                  >
+                    {projectTypes.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} className={"grid"}>
+                  <TextareaAutosize
+                    className={"textarea"}
+                    aria-label="minimum height"
+                    minRows={7}
+                    placeholder="Minimum 3 rows"
+                    style={{ width: 200 }}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
 
-            {/* <Grid item xs={2}>
-              <Typography>hhh</Typography>
+            {/* 
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+           <Grid item xs={3} className={'grid'}>
+              
+                <DatePicker
+                  value={value}
+                  onChange={(newValue) => {
+                    setValue(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+                </Grid>
+                <Grid item xs={9} className={'grid'}>
+                <DatePicker
+                  value={value}
+                  onChange={(newValue) => {
+                    setValue(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              
             </Grid>
-            <Grid item xs={10}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  value={value}
-                  onChange={(newValue) => {
-                    setValue(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-                <DatePicker
-                  value={value}
-                  onChange={(newValue) => {
-                    setValue(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-            </Grid> */}
+            </LocalizationProvider>
+             */}
           </Grid>
           <Divider />
           <Grid container alignItems="center">
@@ -155,14 +178,14 @@ const Form = () => {
             </Grid>
             <Grid item xs={10}>
               <Grid container alignItems="center">
-                <Grid item xs={6}>
+                <Grid item xs={3} className={"grid"}>
                   <TextField
                     required
                     id="outlined-required"
                     label="Client Name"
                   />{" "}
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={9} className={"grid"}>
                   {" "}
                   <TextField
                     required
@@ -170,14 +193,14 @@ const Form = () => {
                     label="Collaborators"
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={3} className={"grid"}>
                   <TextField
                     required
                     id="outlined-required"
                     label="Engagement Director"
                   />{" "}
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={9} className={"grid"}>
                   {" "}
                   <TextField
                     required
@@ -199,27 +222,35 @@ const Form = () => {
               <Typography>Choose Access Level</Typography>
               <RadioForm />
               <Paper elevation={3}>
-                <Typography>Estimate PK FEE: Free for now</Typography>
-                <TextField
-                  id="outlined-select-currency"
-                  select
-                  label="Budget"
-                  value={currency}
-                  onChange={handleChangeCurrency}
-                  helperText="Please select project type"
-                >
-                  {currencies.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Charge Code"
-                />
+                <Grid container>
+                  <Grid item xs={12} className={"grid"}>
+                    {" "}
+                    <Typography>Estimate PK FEE: Free for now</Typography>
+                  </Grid>
+                  <Grid item xs={3} className={"grid"}>
+                    <TextField
+                      id="outlined-select-currency"
+                      select
+                      label="Budget"
+                      value={currency}
+                      onChange={handleChangeCurrency}
+                      helperText="Please select project type"
+                    >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={9} className={"grid"}>
+                    <TextField
+                      required
+                      id="outlined-required"
+                      label="Charge Code"
+                    />
+                  </Grid>
+                </Grid>
               </Paper>
               <small>
                 Note: If you are unsure about the selected levers, you can go

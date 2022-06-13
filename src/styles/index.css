@@ -16,3 +16,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.textarea{
+  width: 100%;
+}
+
+.grid{
+  margin: 20px;
+  padding: 20px;
+  color: red;
+  
+}
