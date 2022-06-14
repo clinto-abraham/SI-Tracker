@@ -10,7 +10,7 @@ const CheckboxLever = (props: any) => {
       array.indexOf(element) === index
   );
 
-  console.log(singleSegment)
+  // console.log(singleSegment)
   const [checked, setChecked] = React.useState([true, false]);
 
   const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,12 +36,12 @@ const CheckboxLever = (props: any) => {
           {singleSegment.map(
             ( element: string, index: number) => (
                 <FormControlLabel
-                  key={index+ element}
                   label={element}
                   control={
                     <Checkbox
                       checked={checked[index]}
                       onChange={(e) => handleChange2(e, index)}
+                      key={index + element}
                     />
                   }
                 />
@@ -65,6 +65,7 @@ const CheckboxLever = (props: any) => {
             checked={checked[0] && checked[1]}
             indeterminate={checked[0] !== checked[1]}
             onChange={handleChange1}
+            // key='1'
           />
         }
       />
