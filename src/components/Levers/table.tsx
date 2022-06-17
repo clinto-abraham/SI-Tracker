@@ -1,27 +1,11 @@
-import * as React from "react";
+import React from "react";
 import { alpha } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { selected, selectedLeverUUID } from "../../redux/features/leverSlice";
+import { selectedLeverUUID } from "../../redux/features/leverSlice";
+import { Box, TableHead,Switch , TableRow, TableCell, Checkbox, TableSortLabel, Toolbar, Typography, Tooltip, IconButton, Paper, TableContainer, Table, TableBody, TablePagination, FormControlLabel } from "@mui/material";
 
 interface DataProps {
   name: string;
@@ -203,7 +187,15 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           variant="subtitle1"
           component="div"
         >
+
+
+
           {numSelected} selected
+
+
+
+
+
         </Typography>
       ) : (
         <Typography
@@ -234,7 +226,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 interface store {
   state: {}[];
-  levers: any;
+  lever: any;
   selectedLevers: any;
 }
 
@@ -243,21 +235,18 @@ export default function TableCheckbox(props: { data: any }) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof DataProps>("name");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
+  let [id, setId] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const dispatch = useDispatch();
-  const provideSelectedUuid = () => {
-    dispatch(selectedLeverUUID(selected));
+  const provideSelectedUuid = (selectedID: any) => {
+    dispatch(selectedLeverUUID(selectedID));
   };
-  // const selec = useSelector((state) => state.levers)
-  const sel = useSelector((state: store) => state.selectedLevers);
-
-  console.log(selected, data, sel);
-
-  // const provideSelectedUuid = () => {
-  //   dispatch(selectedLeverUUID(selected))
-  // }
+  const selectedIDuseSelector = useSelector((state: store) => state.lever.selectedLevers);
+  const state = useSelector((state: store) => state);
+  console.log(selected,"selected data..." , selectedIDuseSelector, state);
+  
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -277,8 +266,11 @@ export default function TableCheckbox(props: { data: any }) {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, uuid: string) => {
+  const handleClick = (event: React.MouseEvent<unknown>, uuid: string, row: { name: string; category: string; location: string; description: string; uuid: string; }) => {
+    event.preventDefault();
+    id = [...id,selectedIDuseSelector];
     const selectedIndex = selected.indexOf(uuid);
+  
     let newSelected: readonly string[] = [];
 
     if (selectedIndex === -1) {
@@ -293,10 +285,9 @@ export default function TableCheckbox(props: { data: any }) {
         selected.slice(selectedIndex + 1)
       );
     }
-
-    setSelected(newSelected);
-    provideSelectedUuid();
-    console.log("provided", selected);
+    setSelected(newSelected)
+    provideSelectedUuid(newSelected); 
+    console.log("provided", row, newSelected, selected);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -337,8 +328,6 @@ export default function TableCheckbox(props: { data: any }) {
               rowCount={data.length}
             />
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-              data.slice().sort(getComparator(order, orderBy)) */}
               {stableSort(data, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
@@ -351,7 +340,7 @@ export default function TableCheckbox(props: { data: any }) {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.uuid)}
+                      onClick={(event) => handleClick(event, row.uuid, row)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
