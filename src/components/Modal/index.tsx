@@ -5,6 +5,8 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const style = {
   position: "absolute" as "absolute",
@@ -18,21 +20,38 @@ const style = {
   p: 4,
 };
 
+interface store {
+  lever: any;
+  
+}
 const ModalForm = (props: any) => {
+  const navigate = useNavigate();
   const { cancel, create } = props;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleCloseCancel = () => {
+    setOpen(false)
+    navigate('/lever')
+  }
+
+  const handleCloseConfirm = () => { 
+    setOpen(false)
+    navigate('/')
+  };
+
+  const uuidSelected = useSelector((state : store) => state.lever.selectedLevers)
+
   return (
     <div>
       {cancel ? (
         <Button variant={"outlined"} onClick={handleOpen}>
-          Cancel{" "}
+          Cancel
         </Button>
       ) : null}
       {create ? (
         <Button variant={"contained"} onClick={handleOpen}>
-          {" "}
+          
           Create Project
         </Button>
       ) : null}
@@ -56,18 +75,16 @@ const ModalForm = (props: any) => {
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
               {cancel ? "All data entries will be cancelled" : null}
               {create
-                ? "You are going to create new project with all data provided."
+                ? <> {uuidSelected.map((element : string, index: number) => <Typography key={index + element}>{element}</Typography>)} "These are the UUID selected for creating new project. You are going to create new project with all data provided."</>
                 : null}
             </Typography>
             {cancel ? (
-              <Button variant={"contained"} onClick={handleClose}>
-                {" "}
-                Confirm{" "}
+              <Button variant={"contained"} onClick={handleCloseCancel}>
+                Confirm
               </Button>
             ) : null}
             {create ? (
-              <Button variant={"contained"} onClick={handleClose}>
-                {" "}
+              <Button variant={"contained"} onClick={handleCloseConfirm}>
                 Confirm
               </Button>
             ) : null}

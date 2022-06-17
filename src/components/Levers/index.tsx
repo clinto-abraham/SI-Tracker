@@ -8,11 +8,23 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CheckboxLever from "./CheckboxLever";
 import { Alert, AlertTitle, Button, Grid } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Agriculture from "@mui/icons-material/Landscape";
+import Industry from "@mui/icons-material/Satellite";
+import Sector from "@mui/icons-material/Inventory";
+import Test from "@mui/icons-material/TaxiAlert";
+import Transport from "@mui/icons-material/Traffic";
+import Power from "@mui/icons-material/PowerTwoTone";
+import Dummy from "@mui/icons-material/AccountBalance";
+import { setShowProceedButton } from "../../redux/features/leverSlice";
+
 
 interface store {
   state: {}[];
-  lever: {};
+  lever: any;
   levers: any;
 }
 interface TabPanelProps {
@@ -48,8 +60,11 @@ function a11yProps(index: any) {
 
 export default function LeverTabs() {
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
-
+  const [value, setValue] = React.useState(2);
+  const navigate = useNavigate();
+  const handleClickProceed = () => {
+    navigate("/form");
+  };
   const handleChange = (event: unknown, newValue: number) => {
     setValue(newValue);
   };
@@ -59,15 +74,60 @@ export default function LeverTabs() {
   };
 
   const data = useSelector((state: store) => state.lever);
-  const leverData = data.levers
+  const leverData = data.levers;
+  const showButton = data.showProceed;
+  const selectedLeverCount = data.selectedLevers.length;
+  const dispatch = useDispatch()
+  React.useEffect(() => {    
+    if (selectedLeverCount > 0) {
+      dispatch(setShowProceedButton(true))
+    } 
+    else if (selectedLeverCount < 1) {
+      dispatch(setShowProceedButton(false))
+    }
+       }, [ selectedLeverCount]);
   const leverDataLength = data.levers.length;
-
+  const sectors = leverData.map((data: any) => data.sector);
+  const singleSector = sectors.filter(
+    (element: any, index: any, array: string | any[]) =>
+      array.indexOf(element) === index
+  );
+  // const singleSectorElement = singleSector.map(
+  //   (element: string, index: number) =>
+  //     leverData.filter(
+  //       (elem: any, index: number, Array: any[]) => elem.sector === element
+  //     )
+  // );
+  // console.log("SingleSectorElement", singleSectorElement);
+  const agri = leverData.filter(
+    (el: { sector: string }) => el.sector === "Agriculture"
+  );
+  const indus = leverData.filter(
+    (el: { sector: string }) => el.sector === "Industry"
+  );
+  const sect = leverData.filter(
+    (el: { sector: string }) => el.sector === "Sector"
+  );
+  const test = leverData.filter(
+    (el: { sector: string }) => el.sector === "Test"
+  );
+  const trans = leverData.filter(
+    (el: { sector: string }) => el.sector === "Transport"
+  );
+  const pow = leverData.filter(
+    (el: { sector: string }) => el.sector === "Power"
+  );
+  const dumy = leverData.filter(
+    (el: { sector: string }) => el.sector === "DuMmY"
+  );
+const agriCountLever = data.agriCount
+console.log(agriCountLever)
   return (
     <div>
       <Alert severity="info" sx={{ paddingTop: "70px" }}>
         <AlertTitle>Note</AlertTitle>
         Please select all the levers you would like to add in the project. At
-        least one lever needs to be selected to create the project
+        least one lever needs to be selected to create the project.{" "}
         <strong>
           At this time, new levers cannot be added once project is created!
         </strong>
@@ -82,9 +142,10 @@ export default function LeverTabs() {
           margin: 3,
         }}
       >
-        
+        <Button onClick={() => navigate("/")} startIcon={<ArrowBackIcon />}>
+          Home
+        </Button>
         <Typography variant={"h5"}>
-          
           Explore Levers #{leverDataLength}
         </Typography>
       </Box>
@@ -107,11 +168,50 @@ export default function LeverTabs() {
             variant="fullWidth"
             aria-label="action tabs example"
           >
-            <Tab label="Agriculture" {...a11yProps(0)} />
-            <Tab label="Building" {...a11yProps(1)} />
-            <Tab label="Industry" {...a11yProps(2)} />
-            {/* <Tab label="Power" {...a11yProps(3)} />
-            <Tab label="Transport" {...a11yProps(4)} /> */}
+            {singleSector.map((element: string, index: number) => {
+              const Icon = (element: string) => {
+                switch (element) {
+                  case "Agriculture":
+                    return <Agriculture  />;
+                  case "Industry":
+                    return <Industry  />;
+                  case "Sector":
+                    return <Sector  />;
+                  case "Test":
+                    return <Test  />;
+                  case "Transport":
+                    return <Transport  />;
+                  case "Power":
+                    return <Power  />;
+                  case "Dummy":
+                    return <Dummy  />;
+
+                  default:
+                    break;
+                }
+              };
+
+              const SectorTab = () => {
+                const sectorSingleMappedElements = leverData.filter(
+                  (el: { sector: string }) => el.sector === element
+                );
+                return <Grid container key={index + element}>
+                {Icon(element)}
+                <Typography key={index + element}>{element}</Typography>
+
+
+                <Typography variant="caption">{agriCountLever}/{sectorSingleMappedElements.length} Selected </Typography>
+
+
+              </Grid>
+              };
+              return (
+                <Tab
+                  label={<SectorTab />}
+                  {...a11yProps(index)}
+                />
+              );
+            })}
           </Tabs>
         </AppBar>
         <SwipeableViews
@@ -120,20 +220,27 @@ export default function LeverTabs() {
           onChangeIndex={handleChangeIndex}
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
-            <CheckboxLever leverData={leverData} />
+            <CheckboxLever leverData={agri} />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
-            Item Two
+            <CheckboxLever leverData={indus} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            Item Three
+            <CheckboxLever leverData={sect} />
           </TabPanel>
           <TabPanel value={value} index={3} dir={theme.direction}>
-            <CheckboxLever />
+            <CheckboxLever leverData={test} />
           </TabPanel>
           <TabPanel value={value} index={4} dir={theme.direction}>
-            <CheckboxLever />
+            <CheckboxLever leverData={trans} />
           </TabPanel>
+          <TabPanel value={value} index={5} dir={theme.direction}>
+            <CheckboxLever leverData={pow} />
+          </TabPanel>
+          <TabPanel value={value} index={6} dir={theme.direction}>
+            <CheckboxLever leverData={dumy} />
+          </TabPanel>
+    
         </SwipeableViews>
       </Box>
 
@@ -148,10 +255,18 @@ export default function LeverTabs() {
       >
         <Grid container>
           <Grid item xs={9}>
-            <Typography> Lever Selected : <strong> 2</strong></Typography>
+            <Typography>
+              {" "}
+              Lever Selected : <strong> {selectedLeverCount}</strong>
+            </Typography>
           </Grid>
           <Grid item xs={3}>
-            <Button variant="contained" disabled={false} >
+            <Button
+              variant="contained"
+              disabled={!showButton}
+              onClick={handleClickProceed}
+              endIcon={<ArrowForwardIcon />}
+            >
               Proceed to add project info
             </Button>
           </Grid>
@@ -160,3 +275,30 @@ export default function LeverTabs() {
     </div>
   );
 }
+
+
+// interface leverObj {
+//   lever: {
+//     uuid: string;
+//     category?: string;
+//     created_at?: Date;
+//     deleted_at: Date;
+//     description: string;
+//     greenfield_possible: string;
+//     last_updated_date: Date;
+//     lever_id: string;
+//     lever_id_plus_region: string;
+//     location: string;
+//     master_lever_uuid: string;
+//     name: string;
+//     owner: string;
+//     review_by_date: Date;
+//     sector: string;
+//     segment: string;
+//     source: string;
+//     unit: string;
+//     unspc?: string;
+//     updated_at: Date;
+//     version: string;
+//   };
+// }
