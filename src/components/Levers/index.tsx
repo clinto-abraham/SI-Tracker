@@ -85,7 +85,10 @@ export default function LeverTabs() {
     else if (selectedLeverCount < 1) {
       dispatch(setShowProceedButton(false))
     }
-       }, [ selectedLeverCount]);
+       }, [selectedLeverCount,dispatch]);
+
+      
+
   const leverDataLength = data.levers.length;
   const sectors = leverData.map((data: any) => data.sector);
   const singleSector = sectors.filter(
@@ -120,7 +123,8 @@ export default function LeverTabs() {
   const dumy = leverData.filter(
     (el: { sector: string }) => el.sector === "DuMmY"
   );
-
+const agriCountLever = data.agriCount
+console.log(agriCountLever)
   return (
     <div>
       <Alert severity="info" sx={{ paddingTop: "70px" }}>
@@ -171,19 +175,19 @@ export default function LeverTabs() {
               const Icon = (element: string) => {
                 switch (element) {
                   case "Agriculture":
-                    return <Agriculture />;
+                    return <Agriculture  />;
                   case "Industry":
-                    return <Industry />;
+                    return <Industry  />;
                   case "Sector":
-                    return <Sector />;
+                    return <Sector  />;
                   case "Test":
-                    return <Test />;
+                    return <Test  />;
                   case "Transport":
-                    return <Transport />;
+                    return <Transport  />;
                   case "Power":
-                    return <Power />;
+                    return <Power  />;
                   case "Dummy":
-                    return <Dummy />;
+                    return <Dummy  />;
 
                   default:
                     break;
@@ -194,11 +198,15 @@ export default function LeverTabs() {
                 const sectorSingleMappedElements = leverData.filter(
                   (el: { sector: string }) => el.sector === element
                 );
-                return <>
+                return <Grid container key={index + element}>
                 {Icon(element)}
                 <Typography key={index + element}>{element}</Typography>
-                <Typography variant="caption">0/{sectorSingleMappedElements.length} Selected </Typography>
-              </>
+
+
+                <Typography variant="caption">{agriCountLever}/{sectorSingleMappedElements.length} Selected </Typography>
+
+
+              </Grid>
               };
               return (
                 <Tab
