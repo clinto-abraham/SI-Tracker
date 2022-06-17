@@ -85,10 +85,7 @@ export default function LeverTabs() {
     else if (selectedLeverCount < 1) {
       dispatch(setShowProceedButton(false))
     }
-       }, [selectedLeverCount,dispatch]);
-
-      
-
+       }, [ selectedLeverCount]);
   const leverDataLength = data.levers.length;
   const sectors = leverData.map((data: any) => data.sector);
   const singleSector = sectors.filter(

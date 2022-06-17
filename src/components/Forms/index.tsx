@@ -9,12 +9,10 @@ import {
   Stack,
   TextareaAutosize,
   TextField,
-  TextFieldProps,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -23,17 +21,12 @@ import RadioForm from "../Radio";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 // import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 // import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
 import DatePicker from "react-datepicker";
 // import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns/index.d";
-import { Field, reduxForm } from "redux-form";
-import Input from "./Input";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  registerForm,
   registerProjectName,
   registerProjectType,
   registerTextarea,
@@ -363,39 +356,31 @@ const Form = () => {
                   />
                 </Grid>
 
-                <Grid item xs={3} className={"grid"}>
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date: Date) => setStartDate(date)}
-                    dateFormat={"dd/MM/yyyy"}
-                    filterDate={(date: Date) =>
-                      date.getDate() >= date.getDate() - 1 &&
-                      date.getDate() !== 0
-                    }
-                    isClearable
-                    ariaLabelledBy="Pick date"
-                    showYearDropdown
-                    className={"date"}
-                  />
-                </Grid>
-                <Grid item xs={9} className={"grid"}>
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date: Date) => setStartDate(date)}
-                    dateFormat={"dd/MM/yyyy"}
-                    filterDate={(date: Date) =>
-                      date.getDate() >= date.getDate() + 1 &&
-                      date.getDate() !== 0
-                    }
-                    isClearable
-                    ariaLabelledBy="Pick date"
-                    showYearDropdown
-                    className={"date"}
-                  />
-                </Grid>
+                <Grid item xs={3} className={'grid'}>
+<DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} 
+dateFormat={'dd/MM/yyyy'}
+filterDate={(date:Date) => date.getDate() !== 6 && date.getDate() !== 0}
+isClearable
+ariaLabelledBy="Pick date"
+showYearDropdown
+className={'date'}
+/>
+</Grid>
+<Grid item xs={9} className={'grid'}>
+<DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} 
+dateFormat={'dd/MM/yyyy'}
+filterDate={(date:Date) => date.getDate() >= date.getDate()+1 && date.getDate() !== 0}
+isClearable
+ariaLabelledBy="Pick date"
+showYearDropdown
+className={'date'}
+/>
+</Grid>
               </Grid>
             </Grid>
 
+
+            
             {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
            <Grid item xs={3} className={'grid'}>
            <DesktopDatePicker

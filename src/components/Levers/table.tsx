@@ -9,6 +9,7 @@ import { Box, TableHead,Switch , TableRow, TableCell, Checkbox, TableSortLabel, 
 
 interface DataProps {
   name: string;
+
   category: string;
   location: string;
   description: string;
