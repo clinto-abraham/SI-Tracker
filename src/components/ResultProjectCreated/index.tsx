@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { useSelector } from 'react-redux';
 
 
@@ -24,7 +24,7 @@ const Output = () => {
         <TableBody>
           
             <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              sx={{ '&:last-child td, &:last-child th': { border: 0, margin: '30px', padding:10 } }}
             >
               <TableCell component="th" scope="row">
                 {formData.projectName}

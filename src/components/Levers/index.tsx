@@ -216,15 +216,36 @@ console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
                 const sectorsSelected = useSelector(
                   (state: store) => state.sectors
                 );
-                const Agri = sectorsSelected.Agriculture.length;
-                const Indus = sectorsSelected.Industry.length;
-                const Sector = sectorsSelected.Sector.length;
-                const Test = sectorsSelected.Test.length;
-                const Transport = sectorsSelected.Transport.length;
-                const Power = sectorsSelected.Power.length;
-                const DuMmY = sectorsSelected.DuMmY.length;
-                const totalCount = Number(Agri+ Indus + Sector + Test + Transport + Power + DuMmY);
-                console.log(totalCount);
+                // const Agri = sectorsSelected.Agriculture.length;
+                // const Indus = sectorsSelected.Industry.length;
+                // const Sector = sectorsSelected.Sector.length;
+                const Agri = sectorsSelected.Agriculture.map((elem: string | any[])=> elem.length)
+                const Indus = sectorsSelected.Industry.map((elem: string | any[])=> elem.length)
+                const Sector = sectorsSelected.Sector.map((elem: string | any[])=> elem.length)
+                const Test = sectorsSelected.Test.map((elem: string | any[])=> elem.length)
+                const Transport = sectorsSelected.Transport.map((elem: string | any[])=> elem.length)
+                const Power = sectorsSelected.Power.map((elem: string | any[])=> elem.length)
+               
+               
+                const DuMmY = sectorsSelected.DuMmY.map((elem: string | any[])=> elem.length)
+           
+            
+
+
+                // const Test = sectorsSelected.Test.length;
+                // const Transport = sectorsSelected.Transport.length;
+                // const Power = sectorsSelected.Power.length;
+                // const DuMmY = sectorsSelected.DuMmY.length;
+                const totalCount = Number(Agri)+ Number(Indus) + Number(Sector) + Number(Test) + Number(Transport) + Number(Power) + Number(DuMmY);
+                dispatch(totalLeverSelectedCount(totalCount))
+                const leverSelectedCount = useSelector((state: store) => state.lever.totalLeverCount)
+                if (leverSelectedCount > 0) {
+                  setShowProceedButton()
+                } else if (leverSelectedCount === 0){
+                  setShowProceedButton()
+                }
+                
+                console.log(totalCount, "totalCount inside tab...", sectorsSelected, "sectorsSelected in tab index.tsx");
 // React.useEffect (() => {
 //   totalLeverSelectedCount(totalCount);
 // },[totalCount])
@@ -307,7 +328,7 @@ console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
           <Grid item xs={3}>
             <Button
               variant="contained"
-              disabled={!showButton}
+              disabled={showButton}
               onClick={handleClickProceed}
               endIcon={<ArrowForwardIcon />}
             >
