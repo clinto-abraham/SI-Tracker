@@ -19,13 +19,16 @@ import Test from "@mui/icons-material/TaxiAlert";
 import Transport from "@mui/icons-material/Traffic";
 import Power from "@mui/icons-material/PowerTwoTone";
 import Dummy from "@mui/icons-material/AccountBalance";
-import { setShowProceedButton } from "../../redux/features/leverSlice";
-
+import {
+  setShowProceedButton,
+  totalLeverSelectedCount,
+} from "../../redux/features/leverSlice";
 
 interface store {
   state: {}[];
   lever: any;
   levers: any;
+  sectors: any;
 }
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -73,19 +76,24 @@ export default function LeverTabs() {
     setValue(index);
   };
 
-  const data = useSelector((state: store) => state.lever);
+const data = useSelector((state: store) => state.lever);
   const leverData = data.levers;
   const showButton = data.showProceed;
-  const selectedLeverCount = data.selectedLevers.length;
-  const dispatch = useDispatch()
-  React.useEffect(() => {    
-    if (selectedLeverCount > 0) {
-      dispatch(setShowProceedButton(true))
-    } 
-    else if (selectedLeverCount < 1) {
-      dispatch(setShowProceedButton(false))
+  // const selectedLeverCount = data.selectedLevers.length;
+  const totalCount = data.totalLeverCount
+  const dispatch = useDispatch();
+//   const totalCount = JSON.stringify(localStorage.getItem("totalCount"));
+console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
+
+  React.useEffect(() => {
+    if (Number(totalCount) >= 1) {
+      dispatch(setShowProceedButton());
+      // dispatch(changeStatus())
+    } else if (Number(totalCount) < 1) {
+      dispatch(setShowProceedButton());
+      // dispatch(changeStatus())
     }
-       }, [ selectedLeverCount]);
+  }, [totalCount]);
   const leverDataLength = data.levers.length;
   const sectors = leverData.map((data: any) => data.sector);
   const singleSector = sectors.filter(
@@ -98,7 +106,7 @@ export default function LeverTabs() {
   //       (elem: any, index: number, Array: any[]) => elem.sector === element
   //     )
   // );
-  // console.log("SingleSectorElement", singleSectorElement);
+  // console.log("SingleSectorElement ....", singleSectorElement);
   const agri = leverData.filter(
     (el: { sector: string }) => el.sector === "Agriculture"
   );
@@ -120,8 +128,17 @@ export default function LeverTabs() {
   const dumy = leverData.filter(
     (el: { sector: string }) => el.sector === "DuMmY"
   );
-const agriCountLever = data.agriCount
-console.log(agriCountLever)
+  const sectorsSelectedUUID = data.sectors;
+  console.log(
+    sectorsSelectedUUID,
+    "sectorsSelectedUUID...",
+    // data,
+    // "data...",
+    // "status...",
+    // status,
+    "showButton ...",
+    showButton
+  );
   return (
     <div>
       <Alert severity="info" sx={{ paddingTop: "70px" }}>
@@ -172,19 +189,19 @@ console.log(agriCountLever)
               const Icon = (element: string) => {
                 switch (element) {
                   case "Agriculture":
-                    return <Agriculture  />;
+                    return <Agriculture />;
                   case "Industry":
-                    return <Industry  />;
+                    return <Industry />;
                   case "Sector":
-                    return <Sector  />;
+                    return <Sector />;
                   case "Test":
-                    return <Test  />;
+                    return <Test />;
                   case "Transport":
-                    return <Transport  />;
+                    return <Transport />;
                   case "Power":
-                    return <Power  />;
+                    return <Power />;
                   case "Dummy":
-                    return <Dummy  />;
+                    return <Dummy />;
 
                   default:
                     break;
@@ -195,22 +212,50 @@ console.log(agriCountLever)
                 const sectorSingleMappedElements = leverData.filter(
                   (el: { sector: string }) => el.sector === element
                 );
-                return <Grid container key={index + element}>
-                {Icon(element)}
-                <Typography key={index + element}>{element}</Typography>
 
+                const sectorsSelected = useSelector(
+                  (state: store) => state.sectors
+                );
+                const Agri = sectorsSelected.Agriculture.length;
+                const Indus = sectorsSelected.Industry.length;
+                const Sector = sectorsSelected.Sector.length;
+                const Test = sectorsSelected.Test.length;
+                const Transport = sectorsSelected.Transport.length;
+                const Power = sectorsSelected.Power.length;
+                const DuMmY = sectorsSelected.DuMmY.length;
+                const totalCount = Number(Agri+ Indus + Sector + Test + Transport + Power + DuMmY);
+                console.log(totalCount);
+// React.useEffect (() => {
+//   totalLeverSelectedCount(totalCount);
+// },[totalCount])
+                // localStorage.setItem("totalCount", JSON.stringify(totalCount));
+                return (
+                  <Grid container key={index + element}>
+                    {Icon(element)}
+                    <Typography key={index + element}>{element}</Typography>
 
-                <Typography variant="caption">{agriCountLever}/{sectorSingleMappedElements.length} Selected </Typography>
-
-
-              </Grid>
+                    <Typography variant="caption">
+                      {element === "Agriculture"
+                        ? Agri
+                        : element === "Industry"
+                        ? Indus
+                        : element === "Sector"
+                        ? Sector
+                        : element === "Test"
+                        ? Test
+                        : element === "Power"
+                        ? Power
+                        : element === "DuMmY"
+                        ? DuMmY
+                        : element === "Transport"
+                        ? Transport
+                        : null}
+                      /{sectorSingleMappedElements.length} Selected{" "}
+                    </Typography>
+                  </Grid>
+                );
               };
-              return (
-                <Tab
-                  label={<SectorTab />}
-                  {...a11yProps(index)}
-                />
-              );
+              return <Tab label={<SectorTab />} {...a11yProps(index)} />;
             })}
           </Tabs>
         </AppBar>
@@ -240,7 +285,6 @@ console.log(agriCountLever)
           <TabPanel value={value} index={6} dir={theme.direction}>
             <CheckboxLever leverData={dumy} />
           </TabPanel>
-    
         </SwipeableViews>
       </Box>
 
@@ -257,7 +301,7 @@ console.log(agriCountLever)
           <Grid item xs={9}>
             <Typography>
               {" "}
-              Lever Selected : <strong> {selectedLeverCount}</strong>
+              Lever Selected : <strong> {totalCount}</strong>
             </Typography>
           </Grid>
           <Grid item xs={3}>
@@ -275,7 +319,6 @@ console.log(agriCountLever)
     </div>
   );
 }
-
 
 // interface leverObj {
 //   lever: {

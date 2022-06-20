@@ -11,8 +11,8 @@ export interface formState {
     projectLevel: string;
     engagementDirector: string;
     description: string;
-    fixedLever: false,
-    customizedLever: false,
+    fixedLever: boolean;
+    customizedLever: boolean;
     budget: string;
     chargeCode: Number;
   
@@ -32,7 +32,7 @@ const initialState: formState = {
   fixedLever: false,
   customizedLever: false,
   budget: '',
-  chargeCode: 0,
+  chargeCode: 1,
 };
 
 
@@ -40,11 +40,12 @@ export const formRegisterSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
-    registerForm: (state , { payload: {key, value} }) => {
-      state = value;
-    },
+    // registerForm: (state , { payload: {key, value} }) => {
+    //   state = value;
+    // },
     registerProjectName: (state , action) => {
       state.projectName = action.payload;
+      console.log(action.payload)
     },
     registerProjectType: (state , action) => {
       state.projectType = action.payload;
@@ -86,6 +87,6 @@ export const formRegisterSlice = createSlice({
   },
 });
 
-export const { registerForm, registerProjectName, registerProjectType, registerTextarea, registerDateFrom, registerDateTo, registerClientName, registerCollaborator, registerEngagementDirector, registerProjectLevel, registerFixedLever, registerCustomizedLever, registerBudget, registerChargeCode } = formRegisterSlice.actions;
+export const {  registerProjectName, registerProjectType, registerTextarea, registerDateFrom, registerDateTo, registerClientName, registerCollaborator, registerEngagementDirector, registerProjectLevel, registerFixedLever, registerCustomizedLever, registerBudget, registerChargeCode } = formRegisterSlice.actions;
 
 export default formRegisterSlice.reducer;
