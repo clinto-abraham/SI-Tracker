@@ -3,62 +3,52 @@ import { data } from '../../mockdata';
 
 export interface LeverState {
   levers : {}[];
-  selectedLevers: string[],
+  // selectedLevers: string[],
   showProceed: boolean;
-  status: 'notSelected' | 'selected' | 'failed';
-  AgriLeverCount: number;
+  // status: 'notSelected' | 'selected' | 'failed';
+  totalLeverCount: number;
+  // selectedSector: [];
 }
 
 const initialState: LeverState = {
   levers: data,
-  selectedLevers: [],
+  // selectedLevers: [],
   showProceed: false,
-  status: 'notSelected',
-  AgriLeverCount : 10,
+  // status: 'notSelected',
+  totalLeverCount : 0,
+  // selectedSector: [],
 };
 
 export const leverSlice = createSlice({
   name: 'levers',
   initialState,
   reducers: {
-    selectedLeverUUID: (state, action) => {
-      if (state.selectedLevers.length === 0) {
-        state.selectedLevers.push(action.payload)
-      } else {
-        state.selectedLevers.pop()
-        state.selectedLevers.push(action.payload)
-      }
-       
-      // state.selectedLevers = [...state.selectedLevers, action.payload];
-      // var index = day_list.indexOf(checked_day);
-      //           if (index > -1) {
-      //               day_list.splice(index, 1);}
-    },
-    // selected: (state, action) => {
-    //   state.selectedLevers.push(action.payload) 
-    // },
     setShowProceedButton : (state, action) => {
-      state.showProceed = action.payload;
-      // state.showProceed = !state.showProceed;
+        state.showProceed = action.payload;
     },
-    cancelProject: (state) => {
-        state.selectedLevers = []
+    totalLeverSelectedCount : (state, action) => {
+      state.totalLeverCount = Number(action.payload);
     },
-    changeStatus : (state, action) => {
-      state.status = action.payload;
-    },
-agriCount : (state, action) => {
-  state.AgriLeverCount = action.payload;
-},
-  },
+    // cancelProject: (state) => {
+    //     state.selectedLevers = []
+    // },
+    // changeStatus : (state) => {
+    //   if (state.selectedLevers.length <= 0){
+    //     state.status = "notSelected";
+    //   } else if (state.selectedLevers.length > 0 ){
+    //     state.status = "selected";
+    //   }
+      
+    // },
+   
 
+  },
+  
   
 });
 
-// export const selectCheckbox = (state: RootState) => state.lever.checkbox;
 
-
-export const { changeStatus, agriCount, selectedLeverUUID, setShowProceedButton, cancelProject } = leverSlice.actions;
+export const { totalLeverSelectedCount, setShowProceedButton } = leverSlice.actions;
 
 export default leverSlice.reducer;
 
@@ -67,14 +57,6 @@ export default leverSlice.reducer;
       // if (existingLever) {
       //   state.selectedLevers.push(checked)
       // } 
-
-
-        // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(toggleCheckboxes, (state: any, action: any) => {
-  //       state.checkbox[action.payload] = !state.checkbox[action.payload];
-  //     });
-  // },
 
       // toggleCheckboxes: (state) =>  state.checkboxState !== state.checkboxState,
     // state.checkboxState.includes(index) ? checkboxState.filter((d,i) => i !== index) : [...checkbox, index]

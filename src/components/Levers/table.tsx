@@ -4,12 +4,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { selectedLeverUUID } from "../../redux/features/leverSlice";
+import { getAllSectorUUID } from "../../redux/features/sectorSlice";
 import { Box, TableHead,Switch , TableRow, TableCell, Checkbox, TableSortLabel, Toolbar, Typography, Tooltip, IconButton, Paper, TableContainer, Table, TableBody, TablePagination, FormControlLabel } from "@mui/material";
 
 interface DataProps {
   name: string;
-
   category: string;
   location: string;
   description: string;
@@ -193,9 +192,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           {numSelected} selected
 
 
-
-
-
         </Typography>
       ) : (
         <Typography
@@ -225,6 +221,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 };
 
 interface store {
+  [x: string]: any;
   state: {}[];
   lever: any;
   selectedLevers: any;
@@ -240,12 +237,13 @@ export default function TableCheckbox(props: { data: any }) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const dispatch = useDispatch();
-  const provideSelectedUuid = (selectedID: any) => {
-    dispatch(selectedLeverUUID(selectedID));
+  const provideSelectedUuid = (selectedSector: any, UUID: readonly string[] | string[] | undefined | string) => {
+    // @ts-ignore
+    dispatch(getAllSectorUUID(selectedSector, UUID));
   };
   const selectedIDuseSelector = useSelector((state: store) => state.lever.selectedLevers);
   const state = useSelector((state: store) => state);
-  console.log(selected,"selected data..." , selectedIDuseSelector, state);
+  // console.log(selected,"selected data..." , selectedIDuseSelector, state.sectors);
   
 
   const handleRequestSort = (
@@ -257,10 +255,38 @@ export default function TableCheckbox(props: { data: any }) {
     setOrderBy(property);
   };
 
+  
+  
+  const temp = data[0].sector
+    // const selectedUUID = state.sectors.filter((elem: any, index: string | number) => elem === data[index].sector);(
+    React.useEffect(()=>{
+      const newSelect = data.map((n: { uuid: string }) => n.uuid);
+    if (data[0].sector === "Agriculture"){
+      const selectedUUIDredux = state.sectors.Agriculture
+      setSelected( selectedUUIDredux || newSelect);
+      console.log("selectedUUIDredux NOW,,,, agriculture => ",selectedUUIDredux,"selected - useState hook",selected, "temp..- position of field", temp, data,"event.target ...")
+    }else if (data[0].sector === "Industry") {
+    
+      const selectedUUID = state.sectors.Industry
+      setSelected( selectedUUID);
+      console.log("state.sectors  ...", state.sectors, "selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
+    }else if (data[0].sector === "Sector") {
+      const selectedUUID = state.sectors.Sector
+      console.log("selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
+    }
+    },[])
+    
+// Agriculture: Array(0), Industry: Array(0), Sector: Array(0), Test: Array(0), Transport: Array(0), …}
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
+    
     if (event.target.checked) {
-      const newSelecteds = data.map((n: { uuid: any }) => n.uuid);
-      setSelected(newSelecteds);
+      const newSelecteds = data.map((n: { uuid: string }) => n.uuid);
+      setSelected( newSelecteds);
+      
+      provideSelectedUuid(data[0].sector, newSelecteds );
+
       return;
     }
     setSelected([]);
@@ -286,8 +312,8 @@ export default function TableCheckbox(props: { data: any }) {
       );
     }
     setSelected(newSelected)
-    provideSelectedUuid(newSelected); 
-    console.log("provided", row, newSelected, selected);
+    localStorage.setItem(data[0].sector, JSON.stringify({ ...newSelected }));
+    provideSelectedUuid(data[0].sector, newSelected );
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -307,7 +333,7 @@ export default function TableCheckbox(props: { data: any }) {
   const isSelected = (uuid: string) => selected.indexOf(uuid) !== -1;
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
-
+// console.log("selected...", selected, "data props...", data[0].sector)
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
