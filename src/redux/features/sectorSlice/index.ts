@@ -49,7 +49,8 @@ export const sectorSlice = createSlice({
           state.DuMmY.push(action.payload.uuid);
         }
       },
-      prepare(selectedSector, uuid) {
+      // @ts-ignore
+      prepare(selectedSector , uuid ) {
         return {
           payload: {
             selectedSector,
@@ -63,7 +64,3 @@ export const sectorSlice = createSlice({
 
 export const { getAllSectorUUID } = sectorSlice.actions;
 export default sectorSlice.reducer;
-
-// agricultureUUID: (state, action) => {
-//   state.Agriculture.push(action.payload)
-// }

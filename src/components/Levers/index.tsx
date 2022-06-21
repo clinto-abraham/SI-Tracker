@@ -63,7 +63,7 @@ function a11yProps(index: any) {
 
 export default function LeverTabs() {
   const theme = useTheme();
-  const [value, setValue] = React.useState(2);
+  const [value, setValue] = React.useState(1);
   const navigate = useNavigate();
   const handleClickProceed = () => {
     navigate("/form");
@@ -76,37 +76,25 @@ export default function LeverTabs() {
     setValue(index);
   };
 
-const data = useSelector((state: store) => state.lever);
+  const data = useSelector((state: store) => state.lever);
   const leverData = data.levers;
   const showButton = data.showProceed;
-  // const selectedLeverCount = data.selectedLevers.length;
-  const totalCount = data.totalLeverCount
+  const totalCount = data.totalLeverCount;
   const dispatch = useDispatch();
-//   const totalCount = JSON.stringify(localStorage.getItem("totalCount"));
-console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
 
   React.useEffect(() => {
-    if (Number(totalCount) >= 1) {
-      dispatch(setShowProceedButton());
-      // dispatch(changeStatus())
-    } else if (Number(totalCount) < 1) {
-      dispatch(setShowProceedButton());
-      // dispatch(changeStatus())
+    if (totalCount === 0) {
+      dispatch(setShowProceedButton(false));
+    } else if (totalCount === 1) {
+      dispatch(setShowProceedButton(true));
     }
-  }, [totalCount]);
+  }, [totalCount, dispatch]);
   const leverDataLength = data.levers.length;
   const sectors = leverData.map((data: any) => data.sector);
   const singleSector = sectors.filter(
     (element: any, index: any, array: string | any[]) =>
       array.indexOf(element) === index
   );
-  // const singleSectorElement = singleSector.map(
-  //   (element: string, index: number) =>
-  //     leverData.filter(
-  //       (elem: any, index: number, Array: any[]) => elem.sector === element
-  //     )
-  // );
-  // console.log("SingleSectorElement ....", singleSectorElement);
   const agri = leverData.filter(
     (el: { sector: string }) => el.sector === "Agriculture"
   );
@@ -128,17 +116,7 @@ console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
   const dumy = leverData.filter(
     (el: { sector: string }) => el.sector === "DuMmY"
   );
-  const sectorsSelectedUUID = data.sectors;
-  console.log(
-    sectorsSelectedUUID,
-    "sectorsSelectedUUID...",
-    // data,
-    // "data...",
-    // "status...",
-    // status,
-    "showButton ...",
-    showButton
-  );
+
   return (
     <div>
       <Alert severity="info" sx={{ paddingTop: "70px" }}>
@@ -216,40 +194,39 @@ console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
                 const sectorsSelected = useSelector(
                   (state: store) => state.sectors
                 );
-                // const Agri = sectorsSelected.Agriculture.length;
-                // const Indus = sectorsSelected.Industry.length;
-                // const Sector = sectorsSelected.Sector.length;
-                const Agri = sectorsSelected.Agriculture.map((elem: string | any[])=> elem.length)
-                const Indus = sectorsSelected.Industry.map((elem: string | any[])=> elem.length)
-                const Sector = sectorsSelected.Sector.map((elem: string | any[])=> elem.length)
-                const Test = sectorsSelected.Test.map((elem: string | any[])=> elem.length)
-                const Transport = sectorsSelected.Transport.map((elem: string | any[])=> elem.length)
-                const Power = sectorsSelected.Power.map((elem: string | any[])=> elem.length)
-               
-               
-                const DuMmY = sectorsSelected.DuMmY.map((elem: string | any[])=> elem.length)
-           
-            
+                const Agri = sectorsSelected.Agriculture.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Indus = sectorsSelected.Industry.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Sector = sectorsSelected.Sector.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Test = sectorsSelected.Test.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Transport = sectorsSelected.Transport.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Power = sectorsSelected.Power.map(
+                  (elem: string | any[]) => elem.length
+                );
 
+                const DuMmY = sectorsSelected.DuMmY.map(
+                  (elem: string | any[]) => elem.length
+                );
 
-                // const Test = sectorsSelected.Test.length;
-                // const Transport = sectorsSelected.Transport.length;
-                // const Power = sectorsSelected.Power.length;
-                // const DuMmY = sectorsSelected.DuMmY.length;
-                const totalCount = Number(Agri)+ Number(Indus) + Number(Sector) + Number(Test) + Number(Transport) + Number(Power) + Number(DuMmY);
-                dispatch(totalLeverSelectedCount(totalCount))
-                const leverSelectedCount = useSelector((state: store) => state.lever.totalLeverCount)
-                if (leverSelectedCount > 0) {
-                  setShowProceedButton()
-                } else if (leverSelectedCount === 0){
-                  setShowProceedButton()
-                }
-                
-                console.log(totalCount, "totalCount inside tab...", sectorsSelected, "sectorsSelected in tab index.tsx");
-// React.useEffect (() => {
-//   totalLeverSelectedCount(totalCount);
-// },[totalCount])
-                // localStorage.setItem("totalCount", JSON.stringify(totalCount));
+                const totalCount =
+                  Number(Agri) +
+                  Number(Indus) +
+                  Number(Sector) +
+                  Number(Test) +
+                  Number(Transport) +
+                  Number(Power) +
+                  Number(DuMmY);
+                dispatch(totalLeverSelectedCount(totalCount));
+
                 return (
                   <Grid container key={index + element}>
                     {Icon(element)}
@@ -328,7 +305,7 @@ console.log(totalCount, "totalCOunt....@@@@@@@@@@@@")
           <Grid item xs={3}>
             <Button
               variant="contained"
-              disabled={showButton}
+              disabled={!showButton}
               onClick={handleClickProceed}
               endIcon={<ArrowForwardIcon />}
             >

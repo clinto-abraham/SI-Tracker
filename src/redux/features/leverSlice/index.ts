@@ -13,7 +13,7 @@ export interface LeverState {
 const initialState: LeverState = {
   levers: data,
   // selectedLevers: [],
-  showProceed: true,
+  showProceed: false,
   // status: 'notSelected',
   totalLeverCount : 0,
   // selectedSector: [],
@@ -23,14 +23,8 @@ export const leverSlice = createSlice({
   name: 'levers',
   initialState,
   reducers: {
-    setShowProceedButton : (state) => {
-      // state.showProceed = action.payload;
-      // if (state.totalLeverCount > 0)  {
-        state.showProceed = !state.showProceed;
-      // } else if (state.totalLeverCount <= 0) {
-      //   state.showProceed = !state.showProceed;
-      // }
-      
+    setShowProceedButton : (state, action) => {
+        state.showProceed = action.payload;
     },
     totalLeverSelectedCount : (state, action) => {
       state.totalLeverCount = Number(action.payload);

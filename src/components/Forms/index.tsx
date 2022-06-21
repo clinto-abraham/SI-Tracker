@@ -178,7 +178,7 @@ const Form = () => {
   const dispatch = useDispatch();
 
   const updateStore = (data: any) => {
-    console.log("updateStore function is hit..", data.projectName, "data.. of updatestore is passed on onSubmit", data)
+    // console.log("updateStore function is hit..", data.projectName, "data.. of updatestore is passed on onSubmit", data)
     dispatch(registerProjectName(data.projectName));
     dispatch(registerProjectType(data.projectType));
     dispatch(registerTextarea(data.textarea));
@@ -254,10 +254,10 @@ const Form = () => {
 
   const onSubmit = (data: any) => {
     localStorage.setItem("projectInfo", JSON.stringify(data));
-    console.log("I am hit..................................", data);
+    // console.log("I am hit..................................", data);
     // const dataLocal = localStorage.getItem("projectInfo");
     updateStore(data);
-    console.log("redux formData..", "errors...", errors);
+    // console.log("redux formData..", "errors...", errors);
   };
 
   //   const formik = useFormik({
@@ -282,7 +282,7 @@ const Form = () => {
   //   },
   // });
 const errorLength = Object.keys(errors).length;
-  console.log(errors)
+  // console.log(errors)
 
 
   // const navigate = useNavigate();
@@ -320,7 +320,7 @@ const errorLength = Object.keys(errors).length;
   const dummy = uuidSelected.DuMmY;
   const totalCount = agriculture.length + industry.length + sector.length + test.length + transport.length + power.length + dummy.length;
   const formData = useSelector((state: any) => state.project);
-  console.log(formData, "formData at modal");
+  // console.log(formData, "formData at modal");
 
 
   return (

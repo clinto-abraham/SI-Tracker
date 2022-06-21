@@ -40,12 +40,8 @@ export const formRegisterSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
-    // registerForm: (state , { payload: {key, value} }) => {
-    //   state = value;
-    // },
     registerProjectName: (state , action) => {
       state.projectName = action.payload;
-      console.log(action.payload)
     },
     registerProjectType: (state , action) => {
       state.projectType = action.payload;
