@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CheckboxLever from "./CheckboxLever";
 import { Alert, AlertTitle, Button, Grid } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -19,36 +19,41 @@ import Test from "@mui/icons-material/TaxiAlert";
 import Transport from "@mui/icons-material/Traffic";
 import Power from "@mui/icons-material/PowerTwoTone";
 import Dummy from "@mui/icons-material/AccountBalance";
+import {
+  setShowProceedButton,
+  totalLeverSelectedCount,
+} from "../../redux/features/leverSlice";
 
-interface leverObj {
-  lever: {
-    uuid: string;
-    category?: string;
-    created_at?: Date;
-    deleted_at: Date;
-    description: string;
-    greenfield_possible: string;
-    last_updated_date: Date;
-    lever_id: string;
-    lever_id_plus_region: string;
-    location: string;
-    master_lever_uuid: string;
-    name: string;
-    owner: string;
-    review_by_date: Date;
-    sector: string;
-    segment: string;
-    source: string;
-    unit: string;
-    unspc?: string;
-    updated_at: Date;
-    version: string;
-  };
-}
+// interface leverObj {
+//   lever: {
+//     uuid: string;
+//     category?: string;
+//     created_at?: Date;
+//     deleted_at: Date;
+//     description: string;
+//     greenfield_possible: string;
+//     last_updated_date: Date;
+//     lever_id: string;
+//     lever_id_plus_region: string;
+//     location: string;
+//     master_lever_uuid: string;
+//     name: string;
+//     owner: string;
+//     review_by_date: Date;
+//     sector: string;
+//     segment: string;
+//     source: string;
+//     unit: string;
+//     unspc?: string;
+//     updated_at: Date;
+//     version: string;
+//   };
+// }
 interface store {
   state: {}[];
-  lever: {}[leverObj];
+  lever: any;
   levers: any;
+  sectors: any;
 }
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -83,7 +88,7 @@ function a11yProps(index: any) {
 
 export default function LeverTabs() {
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(1);
   const navigate = useNavigate();
   const handleClickProceed = () => {
     navigate("/form");
@@ -98,20 +103,23 @@ export default function LeverTabs() {
 
   const data = useSelector((state: store) => state.lever);
   const leverData = data.levers;
-  const leverDataLength = data.levers.length;
+  const showButton = data.showProceed;
+  const totalCount = data.totalLeverCount;
+  const dispatch = useDispatch();
 
+  React.useEffect(() => {
+    if (totalCount === 0) {
+      dispatch(setShowProceedButton(false));
+    } else if (totalCount === 1) {
+      dispatch(setShowProceedButton(true));
+    }
+  }, [totalCount, dispatch]);
+  const leverDataLength = data.levers.length;
   const sectors = leverData.map((data: any) => data.sector);
   const singleSector = sectors.filter(
     (element: any, index: any, array: string | any[]) =>
       array.indexOf(element) === index
   );
-  const singleSectorElement = singleSector.map(
-    (element: string, index: number) =>
-      leverData.filter(
-        (elem: any, index: number, Array: any[]) => elem.sector === element
-      )
-  );
-  console.log("SingleSectorElement", singleSectorElement);
   const agri = leverData.filter(
     (el: { sector: string }) => el.sector === "Agriculture"
   );
@@ -133,6 +141,40 @@ export default function LeverTabs() {
   const dumy = leverData.filter(
     (el: { sector: string }) => el.sector === "DuMmY"
   );
+
+  // const sectors = leverData.map((data: any) => data.sector);
+  // const singleSector = sectors.filter(
+  //   (element: any, index: any, array: string | any[]) =>
+  //     array.indexOf(element) === index
+  // );
+  // const singleSectorElement = singleSector.map(
+  //   (element: string, index: number) =>
+  //     leverData.filter(
+  //       (elem: any, index: number, Array: any[]) => elem.sector === element
+  //     )
+  // );
+  // console.log("SingleSectorElement", singleSectorElement);
+  // const agri = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Agriculture"
+  // );
+  // const indus = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Industry"
+  // );
+  // const sect = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Sector"
+  // );
+  // const test = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Test"
+  // );
+  // const trans = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Transport"
+  // );
+  // const pow = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Power"
+  // );
+  // const dumy = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "DuMmY"
+  // );
 
   return (
     <div>
@@ -203,19 +245,74 @@ export default function LeverTabs() {
                 }
               };
 
-              const SectorTab = () => (
-                <>
-                  {Icon(element)}
-                  <Typography key={index + element}>{element}</Typography>
-                  <Typography variant="caption">0/{"0"} Selected </Typography>
-                </>
-              );
-              return (
-                <Tab
-                  label={<SectorTab />}
-                  {...a11yProps(index)}
-                />
-              );
+              const SectorTab = () => {
+                const sectorSingleMappedElements = leverData.filter(
+                  (el: { sector: string }) => el.sector === element
+                );
+
+                const sectorsSelected = useSelector(
+                  (state: store) => state.sectors
+                );
+                const Agri = sectorsSelected.Agriculture.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Indus = sectorsSelected.Industry.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Sector = sectorsSelected.Sector.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Test = sectorsSelected.Test.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Transport = sectorsSelected.Transport.map(
+                  (elem: string | any[]) => elem.length
+                );
+                const Power = sectorsSelected.Power.map(
+                  (elem: string | any[]) => elem.length
+                );
+
+                const DuMmY = sectorsSelected.DuMmY.map(
+                  (elem: string | any[]) => elem.length
+                );
+
+                const totalCount =
+                  Number(Agri) +
+                  Number(Indus) +
+                  Number(Sector) +
+                  Number(Test) +
+                  Number(Transport) +
+                  Number(Power) +
+                  Number(DuMmY);
+                dispatch(totalLeverSelectedCount(totalCount));
+
+                return (
+                  <Grid container key={index + element}>
+                    {Icon(element)}
+                    <Typography key={index + element}>{element}</Typography>
+
+                    <Typography variant="caption">
+                      {element === "Agriculture"
+                        ? Agri
+                        : element === "Industry"
+                        ? Indus
+                        : element === "Sector"
+                        ? Sector
+                        : element === "Test"
+                        ? Test
+                        : element === "Power"
+                        ? Power
+                        : element === "DuMmY"
+                        ? DuMmY
+                        : element === "Transport"
+                        ? Transport
+                        : null}
+                      /{sectorSingleMappedElements.length} Selected{" "}
+                    </Typography>
+                  </Grid>
+                );
+              };
+              return <Tab label={<SectorTab />} {...a11yProps(index)} />;
             })}
           </Tabs>
         </AppBar>
@@ -231,21 +328,18 @@ export default function LeverTabs() {
             <CheckboxLever leverData={indus} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            <CheckboxLever leverData={indus} />
-          </TabPanel>
-          <TabPanel value={value} index={3} dir={theme.direction}>
             <CheckboxLever leverData={sect} />
           </TabPanel>
-          <TabPanel value={value} index={4} dir={theme.direction}>
+          <TabPanel value={value} index={3} dir={theme.direction}>
             <CheckboxLever leverData={test} />
           </TabPanel>
-          <TabPanel value={value} index={5} dir={theme.direction}>
+          <TabPanel value={value} index={4} dir={theme.direction}>
             <CheckboxLever leverData={trans} />
           </TabPanel>
-          <TabPanel value={value} index={6} dir={theme.direction}>
+          <TabPanel value={value} index={5} dir={theme.direction}>
             <CheckboxLever leverData={pow} />
           </TabPanel>
-          <TabPanel value={value} index={7} dir={theme.direction}>
+          <TabPanel value={value} index={6} dir={theme.direction}>
             <CheckboxLever leverData={dumy} />
           </TabPanel>
         </SwipeableViews>
@@ -264,13 +358,13 @@ export default function LeverTabs() {
           <Grid item xs={9}>
             <Typography>
               {" "}
-              Lever Selected : <strong> 2</strong>
+              Lever Selected : <strong> {totalCount}</strong>
             </Typography>
           </Grid>
           <Grid item xs={3}>
             <Button
               variant="contained"
-              disabled={false}
+              disabled={!showButton}
               onClick={handleClickProceed}
               endIcon={<ArrowForwardIcon />}
             >
@@ -282,3 +376,29 @@ export default function LeverTabs() {
     </div>
   );
 }
+
+// interface leverObj {
+//   lever: {
+//     uuid: string;
+//     category?: string;
+//     created_at?: Date;
+//     deleted_at: Date;
+//     description: string;
+//     greenfield_possible: string;
+//     last_updated_date: Date;
+//     lever_id: string;
+//     lever_id_plus_region: string;
+//     location: string;
+//     master_lever_uuid: string;
+//     name: string;
+//     owner: string;
+//     review_by_date: Date;
+//     sector: string;
+//     segment: string;
+//     source: string;
+//     unit: string;
+//     unspc?: string;
+//     updated_at: Date;
+//     version: string;
+//   };
+// }

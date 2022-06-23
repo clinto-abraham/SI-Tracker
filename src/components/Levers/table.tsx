@@ -1,31 +1,18 @@
-import * as React from 'react';
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { visuallyHidden } from '@mui/utils';
+import React from "react";
+import { alpha } from "@mui/material/styles";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { visuallyHidden } from "@mui/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllSectorUUID } from "../../redux/features/sectorSlice";
+import { Box, TableHead,Switch , TableRow, TableCell, Checkbox, TableSortLabel, Toolbar, Typography, Tooltip, IconButton, Paper, TableContainer, Table, TableBody, TablePagination, FormControlLabel } from "@mui/material";
 
 interface DataProps {
   name: string;
   category: string;
   location: string;
   description: string;
+  uuid: string;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -38,23 +25,21 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = 'asc' | 'desc';
+type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof any>(
   order: Order,
-  orderBy: Key,
-): (
-  a: { [key in Key]: string },
-  b: { [key in Key]: string },
-) => number {
-  return order === 'desc'
+  orderBy: Key
+): (a: { [key in Key]: string }, b: { [key in Key]: string }) => number {
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
+function stableSort<T>(
+  array: readonly T[],
+  comparator: (a: T, b: T) => number
+) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -75,40 +60,44 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: 'name',
+    id: "name",
     numeric: false,
     disablePadding: true,
-    label: 'Lever Name',
+    label: "Lever Name",
   },
+
   {
-    id: 'category',
+    id: "category",
     numeric: false,
     disablePadding: false,
-    label: 'Category',
+    label: "Category",
   },
   {
-    id: 'location',
+    id: "location",
     numeric: false,
     disablePadding: false,
-    label: 'Location',
+    label: "Location",
   },
   {
-    id: 'description',
+    id: "description",
     numeric: false,
     disablePadding: false,
-    label: 'Description',
+    label: "Description",
   },
-  // {
-  //   id: 'protein',
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: 'Protein (g)',
-  // },
+  {
+    id: "uuid",
+    numeric: false,
+    disablePadding: false,
+    label: "UUID",
+  },
 ];
 
 interface EnhancedTableProps {
   numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof DataProps) => void;
+  onRequestSort: (
+    event: React.MouseEvent<unknown>,
+    property: keyof DataProps
+  ) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
@@ -116,8 +105,14 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
   const createSortHandler =
     (property: keyof DataProps) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
@@ -133,26 +128,26 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all levers',
+              "aria-label": "select all levers",
             }}
           />
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -177,22 +172,30 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+            alpha(
+              theme.palette.primary.main,
+              theme.palette.action.activatedOpacity
+            ),
         }),
       }}
     >
       {numSelected > 0 ? (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
+
+
+
           {numSelected} selected
+
+
         </Typography>
       ) : (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: "1 1 100%" }}
           variant="h6"
           id="tableTitle"
           component="div"
@@ -217,39 +220,87 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-export default function TableCheckbox(props: { data: any; }) {
+interface store {
+  [x: string]: any;
+  state: {}[];
+  lever: any;
+  selectedLevers: any;
+}
+
+export default function TableCheckbox(props: { data: any }) {
   const { data } = props;
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof DataProps>('name');
+  const [order, setOrder] = React.useState<Order>("asc");
+  const [orderBy, setOrderBy] = React.useState<keyof DataProps>("name");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
+  let [id, setId] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const dispatch = useDispatch();
+  const provideSelectedUuid = (selectedSector: any, UUID: readonly string[] | string[] | undefined | string) => {
+    // @ts-ignore
+    dispatch(getAllSectorUUID(selectedSector, UUID));
+  };
+  const selectedIDuseSelector = useSelector((state: store) => state.lever.selectedLevers);
+  const state = useSelector((state: store) => state);
+  // console.log(selected,"selected data..." , selectedIDuseSelector, state.sectors);
+  
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof DataProps,
+    property: keyof DataProps
   ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
+  
+  
+  const temp = data[0].sector
+    // const selectedUUID = state.sectors.filter((elem: any, index: string | number) => elem === data[index].sector);(
+    React.useEffect(()=>{
+      const newSelect = data.map((n: { uuid: string }) => n.uuid);
+    if (data[0].sector === "Agriculture"){
+      const selectedUUIDredux = state.sectors.Agriculture
+      setSelected( selectedUUIDredux || newSelect);
+      console.log("selectedUUIDredux NOW,,,, agriculture => ",selectedUUIDredux,"selected - useState hook",selected, "temp..- position of field", temp, data,"event.target ...")
+    }else if (data[0].sector === "Industry") {
+    
+      const selectedUUID = state.sectors.Industry
+      setSelected( selectedUUID);
+      console.log("state.sectors  ...", state.sectors, "selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
+    }else if (data[0].sector === "Sector") {
+      const selectedUUID = state.sectors.Sector
+      console.log("selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
+    }
+    },[])
+    
+// Agriculture: Array(0), Industry: Array(0), Sector: Array(0), Test: Array(0), Transport: Array(0), …}
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
+    
     if (event.target.checked) {
-      const newSelecteds = data.map((n: { name: any; }) => n.name);
-      setSelected(newSelecteds);
+      const newSelecteds = data.map((n: { uuid: string }) => n.uuid);
+      setSelected( newSelecteds);
+      
+      provideSelectedUuid(data[0].sector, newSelecteds );
+
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event: React.MouseEvent<unknown>, uuid: string, row: { name: string; category: string; location: string; description: string; uuid: string; }) => {
+    event.preventDefault();
+    id = [...id,selectedIDuseSelector];
+    const selectedIndex = selected.indexOf(uuid);
+  
     let newSelected: readonly string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, uuid);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -257,18 +308,21 @@ export default function TableCheckbox(props: { data: any; }) {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
-
-    setSelected(newSelected);
+    setSelected(newSelected)
+    localStorage.setItem(data[0].sector, JSON.stringify({ ...newSelected }));
+    provideSelectedUuid(data[0].sector, newSelected );
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -276,22 +330,19 @@ export default function TableCheckbox(props: { data: any; }) {
   const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDense(event.target.checked);
   };
-
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
-  // Avoid a layout jump when reaching the last page with empty row data.
+  const isSelected = (uuid: string) => selected.indexOf(uuid) !== -1;
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
-
+// console.log("selected...", selected, "data props...", data[0].sector)
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer component={Paper}>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={dense ? "small" : "medium"}
             stickyHeader
           >
             <EnhancedTableHead
@@ -303,22 +354,23 @@ export default function TableCheckbox(props: { data: any; }) {
               rowCount={data.length}
             />
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-              data.slice().sort(getComparator(order, orderBy)) */}
               {stableSort(data, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const isItemSelected = isSelected(row.uuid);
+
+                  const labelId = `enhanced-table-checkbox-${
+                    row.location + index
+                  }`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, row.uuid, row)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.uuid}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -326,7 +378,7 @@ export default function TableCheckbox(props: { data: any; }) {
                           color="primary"
                           checked={isItemSelected}
                           inputProps={{
-                            'aria-labelledby': labelId,
+                            "aria-labelledby": labelId,
                           }}
                         />
                       </TableCell>
@@ -341,6 +393,7 @@ export default function TableCheckbox(props: { data: any; }) {
                       <TableCell align="right">{row.category}</TableCell>
                       <TableCell align="right">{row.location}</TableCell>
                       <TableCell align="right">{row.description}</TableCell>
+                      <TableCell align="right">{row.uuid}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -357,7 +410,7 @@ export default function TableCheckbox(props: { data: any; }) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 5, 5]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}

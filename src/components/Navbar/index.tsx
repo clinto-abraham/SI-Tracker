@@ -159,11 +159,27 @@ const Navbar = () => {
                   <Link to="form">
                     <Badge badgeContent={1} color="error">
                       {/* <NotificationsIcon /> */}
-                      My Projects
+                      Create Project
                     </Badge>
                   </Link>
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Create project with selected levers">
+                <IconButton
+                  size="large"
+                  aria-label="show 17 new notifications"
+                  color="inherit"
+                >
+                  <Link to="project-data">
+                    <Badge badgeContent={1} color="error">
+                      {/* <NotificationsIcon /> */}
+                      My Project
+                    </Badge>
+                  </Link>
+                </IconButton>
+              </Tooltip>
+
+
               <IconButton
                 size="large"
                 edge="end"

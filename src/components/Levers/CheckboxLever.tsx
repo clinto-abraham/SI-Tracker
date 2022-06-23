@@ -12,36 +12,31 @@ const CheckboxLever = (props: any) => {
 
   console.log(singleSegment)
   const [checked, setChecked] = React.useState([true, false]);
-
   const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([event.target.checked, event.target.checked]);
   };
-
   const handleChange2 = (
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
     setChecked([event.target.checked, checked[index]]);
   };
-
   // const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setChecked([checked[0], event.target.checked]);
   // };
-
   const children = (
     <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
       <Grid container>
         <Grid item xs={3}>
-          
           {singleSegment.map(
             ( element: string, index: number) => (
                 <FormControlLabel
-                  key={index+ element}
                   label={element}
                   control={
                     <Checkbox
                       checked={checked[index]}
                       onChange={(e) => handleChange2(e, index)}
+                      key={index + element}
                     />
                   }
                 />
@@ -65,6 +60,7 @@ const CheckboxLever = (props: any) => {
             checked={checked[0] && checked[1]}
             indeterminate={checked[0] !== checked[1]}
             onChange={handleChange1}
+            // key='1'
           />
         }
       />
