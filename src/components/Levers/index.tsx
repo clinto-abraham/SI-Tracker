@@ -24,6 +24,31 @@ import {
   totalLeverSelectedCount,
 } from "../../redux/features/leverSlice";
 
+// interface leverObj {
+//   lever: {
+//     uuid: string;
+//     category?: string;
+//     created_at?: Date;
+//     deleted_at: Date;
+//     description: string;
+//     greenfield_possible: string;
+//     last_updated_date: Date;
+//     lever_id: string;
+//     lever_id_plus_region: string;
+//     location: string;
+//     master_lever_uuid: string;
+//     name: string;
+//     owner: string;
+//     review_by_date: Date;
+//     sector: string;
+//     segment: string;
+//     source: string;
+//     unit: string;
+//     unspc?: string;
+//     updated_at: Date;
+//     version: string;
+//   };
+// }
 interface store {
   state: {}[];
   lever: any;
@@ -116,6 +141,40 @@ export default function LeverTabs() {
   const dumy = leverData.filter(
     (el: { sector: string }) => el.sector === "DuMmY"
   );
+
+  // const sectors = leverData.map((data: any) => data.sector);
+  // const singleSector = sectors.filter(
+  //   (element: any, index: any, array: string | any[]) =>
+  //     array.indexOf(element) === index
+  // );
+  // const singleSectorElement = singleSector.map(
+  //   (element: string, index: number) =>
+  //     leverData.filter(
+  //       (elem: any, index: number, Array: any[]) => elem.sector === element
+  //     )
+  // );
+  // console.log("SingleSectorElement", singleSectorElement);
+  // const agri = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Agriculture"
+  // );
+  // const indus = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Industry"
+  // );
+  // const sect = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Sector"
+  // );
+  // const test = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Test"
+  // );
+  // const trans = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Transport"
+  // );
+  // const pow = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "Power"
+  // );
+  // const dumy = leverData.filter(
+  //   (el: { sector: string }) => el.sector === "DuMmY"
+  // );
 
   return (
     <div>

@@ -17,6 +17,7 @@ import {
   Stack,
   TextareaAutosize,
   TextField,
+  TextFieldProps,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";

@@ -264,7 +264,7 @@ export default function TableCheckbox(props: { data: any }) {
     if (data[0].sector === "Agriculture"){
       const selectedUUIDredux = state.sectors.Agriculture
       setSelected( selectedUUIDredux || newSelect);
-      console.log("selectedUUIDredux NOW,,,, agriculture => ",selectedUUIDredux,"selected - useState hook",selected, "temp..- position of field", temp, data,"event.target ...")
+      // console.log("selectedUUIDredux NOW,,,, agriculture => ",selectedUUIDredux,"selected - useState hook",selected, "temp..- position of field", temp, data,"event.target ...")
     }else if (data[0].sector === "Industry") {
     
       const selectedUUID = state.sectors.Industry
@@ -272,7 +272,7 @@ export default function TableCheckbox(props: { data: any }) {
       console.log("state.sectors  ...", state.sectors, "selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
     }else if (data[0].sector === "Sector") {
       const selectedUUID = state.sectors.Sector
-      console.log("selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
+      // console.log("selectedUUID NOW,,,, industry",selectedUUID,"selected - useState hook",selected, "temp..- position of field", temp) 
     }
     },[])
     
