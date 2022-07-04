@@ -6,12 +6,16 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import { useAppSelector } from '../../redux/hooks';
+
+
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
-
+    const data = useAppSelector((state: any) => state.lever);
+    const totalCount = data.totalLeverCount;
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -135,6 +139,9 @@ const Navbar = () => {
                   <Link to="/">Home</Link>
                 </IconButton>
               </Tooltip>
+
+
+
               <Tooltip title="Choose levers">
                 <IconButton
                   size="large"
@@ -142,7 +149,7 @@ const Navbar = () => {
                   color="inherit"
                 >
                   <Link to="lever">
-                    <Badge badgeContent={4} color="error">
+                    <Badge badgeContent={totalCount} color="error">
                       {/* <MailIcon /> */}
                       Lever
                     </Badge>
@@ -150,20 +157,8 @@ const Navbar = () => {
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="Create project with selected levers">
-                <IconButton
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="inherit"
-                >
-                  <Link to="form">
-                    <Badge badgeContent={1} color="error">
-                      {/* <NotificationsIcon /> */}
-                      Create Project
-                    </Badge>
-                  </Link>
-                </IconButton>
-              </Tooltip>
+         
+              
               <Tooltip title="Create project with selected levers">
                 <IconButton
                   size="large"

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   Backdrop,
   Box,
   Button,
@@ -14,23 +15,14 @@ import {
   Paper,
   Radio,
   RadioGroup,
+  Snackbar,
   Stack,
   TextareaAutosize,
   TextField,
-  TextFieldProps,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import "react-datepicker/dist/react-datepicker.css";
-// import ModalForm from "./Modal";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-// import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
-import DatePicker from "react-datepicker";
-// import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { useDispatch, useSelector } from "react-redux";
 import {
   registerProjectName,
   registerProjectType,
@@ -46,7 +38,11 @@ import {
   registerBudget,
   registerChargeCode,
 } from "../../redux/features/formSlice";
-import { create } from "yup/lib/Reference";
+
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import "react-datepicker/dist/react-datepicker.css";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DatePicker from "react-datepicker";
 
 const style = {
   position: "absolute" as "absolute",
@@ -59,70 +55,6 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
-// interface store {
-//   sectors: any;
-// }
-// import { UpdateStore } from "./updateStore";
-
-// interface errorProps {
-//   projectName: string;
-//       projectType: string;
-//       textarea: string;
-//       dateFrom: string;
-//       dateTo: string;
-//       clientName: string;
-//       collaborator: string;
-//       engagementDirector: string;
-//       projectLevel: string;
-//       fixedLever: string;
-//       customizedLever: string;
-//       budget: string;
-//       chargeCode: string;
-// }
-// const validate  = (values:  errorProps  ) => {
-//   let errors = {
-//     projectName: '',
-//       projectType: '',
-//       textarea: '',
-//       dateFrom: '',
-//       dateTo: '',
-//       clientName: '',
-//       collaborator: '',
-//       engagementDirector: '',
-//       projectLevel: '',
-//       fixedLever: '',
-//       customizedLever: '',
-//       budget: '',
-//       chargeCode: '',
-//   };
-
-//   if (!values.projectName) {
-//     errors.projectName = 'Required';
-//   } else if (values.projectName.length > 15) {
-//     errors.projectName = 'Must be 15 characters or less';
-//   }
-
-//   if (!values.textarea) {
-//     errors.textarea = 'Required';
-//   } else if (values.textarea.length < 150) {
-//     errors.textarea = 'Must be 150 characters or more';
-//   }
-
-//   if (!values.clientName) {
-//     errors.clientName = 'Required';
-//   } else if (values.clientName.length > 20) {
-//     errors.clientName = 'Must be 20 characters or less';
-//   }
-
-//   // if (!values.email) {
-//   //   errors.email = 'Required';
-//   // } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-//   //   errors.email = 'Invalid email address';
-//   // }
-
-//   return errors;
-// };
 
 const currencies = [
   {
@@ -162,21 +94,40 @@ const Form = () => {
   const navigate = useNavigate();
   const [currency, setCurrency] = React.useState("Dollar");
   const [project, setProject] = React.useState("Loss of pay");
-  const { projectName ,
-     projectType ,
-     textarea ,
-     dateFrom ,
-     dateTo,
-     clientName,
-     collaborator ,
-     projectLevel ,
-     engagementDirector ,
-     description ,
-     fixedLever ,
-     customizedLever ,
-     budget,
-     chargeCode } = useSelector((state: any) => state.project);
-  const dispatch = useDispatch();
+
+  const [openSnack, setOpenSnack] = React.useState(false);
+
+  const handleClickSnack = () => {
+    setOpenSnack(true);
+  };
+
+  const handleCloseSnack = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnack(false);
+  };
+
+
+
+  const {
+    projectName,
+    projectType,
+    textarea,
+    dateFrom,
+    dateTo,
+    clientName,
+    collaborator,
+    projectLevel,
+    engagementDirector,
+    description,
+    fixedLever,
+    customizedLever,
+    budget,
+    chargeCode,
+  } = useAppSelector((state: any) => state.project);
+  const dispatch = useAppDispatch();
 
   const updateStore = (data: any) => {
     // console.log("updateStore function is hit..", data.projectName, "data.. of updatestore is passed on onSubmit", data)
@@ -196,7 +147,7 @@ const Form = () => {
   };
 
   const [valueDate, setValueDate] = React.useState<Date | null>(
-    new Date("2014-08-18T21:11:54")
+    new Date("2022-08-18T21:11:54")
   );
 
   const handleChangeDate = (newValue: Date | null) => {
@@ -204,97 +155,66 @@ const Form = () => {
   };
 
   const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date());
 
   const handleChangeCurrency = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(event.target.value);
   };
-  // const handleChangeProject = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setProject(event.target.value);
-  // };
-
-  // console.log(formData, "formData ....");
-
-  // const projectName = formData.projectName;
-  // const projectType = formData.projectType;
-  // const textarea = formData.textarea;
-  // const dateFrom = formData.dateFrom;
-  // const dateTo = formData.dateTo;
-  // const clientName = formData.clientName;
-  // const collaborator = formData.collaborator;
-  // const projectLevel = formData.Level;
-  // const engagementDirector = formData.engagementDirector;
-  // const description = formData.description;
-  // const fixedLever = formData.fixedLever;
-  // const customizedLever = formData.customizedLever;
-  // const budget = formData.budget;
-  // const chargeCode = formData.chargeCode;
-
+  
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty, isValid },
+    getValues,
     control,
   } = useForm({
     defaultValues: {
-      projectName,
-      projectType,
-      textarea,
-      dateFrom,
-      dateTo,
-      clientName,
-      collaborator,
-      projectLevel,
-      engagementDirector,
-      description,
-      fixedLever,
-      customizedLever,
-      budget,
-      chargeCode,
+      projectName: projectName,
+      projectType: projectType,
+      textarea: textarea,
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      clientName: clientName,
+      collaborator: collaborator,
+      projectLevel: projectLevel,
+      engagementDirector: engagementDirector,
+      description: description,
+      fixedLever: fixedLever,
+      customizedLever: customizedLever,
+      budget: budget,
+      chargeCode: chargeCode,
     },
   });
 
   const onSubmit = (data: any) => {
     localStorage.setItem("projectInfo", JSON.stringify(data));
-    // console.log("I am hit..................................", data);
-    // const dataLocal = localStorage.getItem("projectInfo");
     updateStore(data);
-    // console.log("redux formData..", "errors...", errors);
-  };
-
-  //   const formik = useFormik({
-  //   initialValues: {
-  //     projectName: '',
-  //     projectType: '',
-  //     textarea: '',
-  //     dateFrom: '',
-  //     dateTo: '',
-  //     clientName: '',
-  //     collaborator: '',
-  //     engagementDirector: '',
-  //     projectLevel: '',
-  //     fixedLever: '',
-  //     customizedLever: '',
-  //     budget: '',
-  //     chargeCode: '',
-  //   },
-  //   validate,
-  //   onSubmit: values => {
-  //     alert(JSON.stringify(values, null, 2));
-  //   },
-  // });
-const errorLength = Object.keys(errors).length;
-  // console.log(errors)
-
-
-  // const navigate = useNavigate();
-  // const { cancel, create, onSubmit, errorLength, isValid } = props;
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => { 
+    handleOpen()
     
-    setOpen(true); 
-    // onSubmit();
   };
+
+  const errorLength = Object.keys(errors).length;
+  const [disabledByDefaultValue, setDisabledByDefaultValue] = React.useState(false)
+
+
+const hookValue = getValues()
+if (hookValue.projectName ===   undefined || null) {
+  setDisabledByDefaultValue(!disabledByDefaultValue)
+  
+}
+React.useEffect(() => {
+  if(Object.keys(errors).length > 0) {
+    handleClickSnack()
+  }
+},[hookValue.chargeCode, hookValue.projectName, hookValue.projectType, hookValue.clientName, hookValue.collaborator, hookValue.textarea])
+
+  console.log(errors, errorLength, isValid, hookValue.projectName)
+
+  const [open, setOpen] = React.useState(false);
+  // const [close, setClose] = React.useState(false);
+  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   const handleCloseCancel = () => {
     setOpen(false);
     navigate("/lever");
@@ -303,15 +223,12 @@ const errorLength = Object.keys(errors).length;
   const handleCloseConfirm = () => {
     setOpen(false);
     navigate("/project-data");
-    handleSubmit(onSubmit)
+    handleSubmit(onSubmit);
     // const data = localStorage.getItem("projectInfo");
     //  onSubmit(UpdateStore(data));
   };
 
-
-  const uuidSelected = useSelector(
-    (state: any) => state.sectors
-  );
+  const uuidSelected = useAppSelector((state: any) => state.sectors);
   const agriculture = uuidSelected.Agriculture;
   const industry = uuidSelected.Industry;
   const sector = uuidSelected.Sector;
@@ -319,10 +236,15 @@ const errorLength = Object.keys(errors).length;
   const transport = uuidSelected.Transport;
   const power = uuidSelected.Power;
   const dummy = uuidSelected.DuMmY;
-  const totalCount = agriculture.length + industry.length + sector.length + test.length + transport.length + power.length + dummy.length;
-  const formData = useSelector((state: any) => state.project);
-  // console.log(formData, "formData at modal");
-
+  const totalCount =
+    agriculture.length +
+    industry.length +
+    sector.length +
+    test.length +
+    transport.length +
+    power.length +
+    dummy.length;
+  const formData = useAppSelector((state: any) => state.project);
 
   return (
     <>
@@ -383,19 +305,18 @@ const errorLength = Object.keys(errors).length;
                     label="Project Name"
                     name="projectName"
                   />
-                 <span>{errors.projectName?.type === "required" &&
-                    "Project name is required"} </span> 
-                  
+                  <span>
+                    {errors.projectName?.type === "required" &&
+                      "Project name is required"}{" "}
+                  </span>
                 </Grid>
                 <Grid item xs={9} className={"grid"}>
                   <TextField
                     {...register("projectType", {
                       required: true,
                     })}
-                    
                     id="outlined-select-currency"
                     select
-                   
                     label="Project type"
                     helperText="Please select project type"
                   >
@@ -405,10 +326,17 @@ const errorLength = Object.keys(errors).length;
                       </MenuItem>
                     ))}
                   </TextField>
-                  {errors.projectType && errors.projectType.type === "required" && <span>This is required</span>}
-                  {errors.projectType && errors.projectType.type === "maxLength" && <span>Max length exceeded. Kindly enter 100 chars only.</span> }
+                  {errors.projectType &&
+                    errors.projectType.type === "required" && (
+                      <span>This is required</span>
+                    )}
+                  {errors.projectType &&
+                    errors.projectType.type === "maxLength" && (
+                      <span>
+                        Max length exceeded. Kindly enter 100 chars only.
+                      </span>
+                    )}
                   {isDirty && <p>This field is dirty</p>}
-
                 </Grid>
                 <Grid item xs={12} className={"grid"}>
                   <TextareaAutosize
@@ -420,14 +348,21 @@ const errorLength = Object.keys(errors).length;
                     className={"textarea"}
                     aria-label="maximum height"
                     minRows={7}
-                 
                     name={"textarea"}
                     placeholder="Give brief in max 100 chars and min 10 chars"
                     style={{ width: 440 }}
                   />
-                  {errors.textarea && errors.textarea.type === "required" && <span>This is required</span>}
-                  {errors.textarea && errors.textarea.type === "maxLength" && <span>Max length exceeded. Kindly enter 100 chars only.</span> }
-                  {errors.textarea && errors.textarea.type === "minLength" && <span>Min length 10 chars required.</span> }
+                  {errors.textarea && errors.textarea.type === "required" && (
+                    <span>This is required</span>
+                  )}
+                  {errors.textarea && errors.textarea.type === "maxLength" && (
+                    <span>
+                      Max length exceeded. Kindly enter 100 chars only.
+                    </span>
+                  )}
+                  {errors.textarea && errors.textarea.type === "minLength" && (
+                    <span>Min length 10 chars required.</span>
+                  )}
                   {isDirty && <p>This field is dirty</p>}
                 </Grid>
 
@@ -446,13 +381,23 @@ const errorLength = Object.keys(errors).length;
                   />
                 </Grid>
                 <Grid item xs={9} className={"grid"}>
+
+
+                {/* <DatePicker selected={startDate}  maxDate={new Date()} className="form-control" onChange={(date : Date) => setStartDate(date)} /> */}
+
+{/* <DatePicker selected={endDate}  maxDate={new Date()} className="form-control"  onChange={(date) => setEndDate(date)} />  */}
+
+
                   <DatePicker
-                    selected={startDate}
-                    onChange={(date: Date) => setStartDate(date)}
+                    selected={endDate}
+                    onChange={(date: Date) => setEndDate(date)}
                     dateFormat={"dd/MM/yyyy"}
+                    // filterDate={(date: Date) =>
+                    //   date.getDate() >= date.getDate() +30 &&
+                    //   date.getDate() !== 0
+                    // }
                     filterDate={(date: Date) =>
-                      date.getDate() >= date.getDate() + 1 &&
-                      date.getDate() !== 0
+                      date.getDate() !== 6 && date.getDate() !== 0
                     }
                     isClearable
                     ariaLabelledBy="Pick date"
@@ -520,9 +465,20 @@ const errorLength = Object.keys(errors).length;
                     id="outlined-required"
                     label="Client Name"
                   />
-                   {errors.clientName && errors.clientName.type === "required" && <span>This is required</span>  }
-                  {errors.clientName && errors.clientName.type === "maxLength" && <span>Max length exceeded. Kindly enter 25 chars only.</span> }
-                  {errors.clientName && errors.clientName.type === "minLength" && <span>Min length 3 chars required.</span> }
+                  {errors.clientName &&
+                    errors.clientName.type === "required" && (
+                      <span>This is required</span>
+                    )}
+                  {errors.clientName &&
+                    errors.clientName.type === "maxLength" && (
+                      <span>
+                        Max length exceeded. Kindly enter 25 chars only.
+                      </span>
+                    )}
+                  {errors.clientName &&
+                    errors.clientName.type === "minLength" && (
+                      <span>Min length 3 chars required.</span>
+                    )}
                 </Grid>
                 <Grid item xs={9} className={"grid"}>
                   <TextField
@@ -535,10 +491,20 @@ const errorLength = Object.keys(errors).length;
                     label="Collaborators"
                     name="collaborator"
                   />
-                    {errors.collaborator && errors.collaborator.type === "required" && <span>This field is required</span>  }
-                  {errors.collaborator && errors.collaborator.type === "maxLength" && <span>Max length exceeded. Kindly enter 25 chars only.</span> }
-                  {errors.collaborator && errors.collaborator.type === "minLength" && <span>Min length 3 chars required.</span> }
-
+                  {errors.collaborator &&
+                    errors.collaborator.type === "required" && (
+                      <span>This field is required</span>
+                    )}
+                  {errors.collaborator &&
+                    errors.collaborator.type === "maxLength" && (
+                      <span>
+                        Max length exceeded. Kindly enter 25 chars only.
+                      </span>
+                    )}
+                  {errors.collaborator &&
+                    errors.collaborator.type === "minLength" && (
+                      <span>Min length 3 chars required.</span>
+                    )}
                 </Grid>
                 <Grid item xs={3} className={"grid"}>
                   <TextField
@@ -552,9 +518,20 @@ const errorLength = Object.keys(errors).length;
                     label="Engagement Director"
                     name="engagementDirector"
                   />
-                  {errors.engagementDirector && errors.engagementDirector.type === "required" && <span>This field is required</span>  }
-                  {errors.engagementDirector && errors.engagementDirector.type === "maxLength" && <span>Max length exceeded. Kindly enter 25 chars only.</span> }
-                  {errors.engagementDirector && errors.engagementDirector.type === "minLength" && <span>Min length 3 chars required.</span> }
+                  {errors.engagementDirector &&
+                    errors.engagementDirector.type === "required" && (
+                      <span>This field is required</span>
+                    )}
+                  {errors.engagementDirector &&
+                    errors.engagementDirector.type === "maxLength" && (
+                      <span>
+                        Max length exceeded. Kindly enter 25 chars only.
+                      </span>
+                    )}
+                  {errors.engagementDirector &&
+                    errors.engagementDirector.type === "minLength" && (
+                      <span>Min length 3 chars required.</span>
+                    )}
                 </Grid>
                 <Grid item xs={9} className={"grid"}>
                   <TextField
@@ -563,14 +540,23 @@ const errorLength = Object.keys(errors).length;
                       maxLength: 15,
                       minLength: 3,
                     })}
-                    
                     id="outlined-required"
                     label="Project Level"
-                
                   />
-                  {errors.projectLevel && errors.projectLevel.type === "required" && <span>This field is required</span>  }
-                  {errors.projectLevel && errors.projectLevel.type === "maxLength" && <span>Max length exceeded. Kindly enter 25 chars only.</span> }
-                  {errors.projectLevel && errors.projectLevel.type === "minLength" && <span>Min length 3 chars required.</span> }
+                  {errors.projectLevel &&
+                    errors.projectLevel.type === "required" && (
+                      <span>This field is required</span>
+                    )}
+                  {errors.projectLevel &&
+                    errors.projectLevel.type === "maxLength" && (
+                      <span>
+                        Max length exceeded. Kindly enter 25 chars only.
+                      </span>
+                    )}
+                  {errors.projectLevel &&
+                    errors.projectLevel.type === "minLength" && (
+                      <span>Min length 3 chars required.</span>
+                    )}
                 </Grid>
               </Grid>
             </Grid>
@@ -585,21 +571,27 @@ const errorLength = Object.keys(errors).length;
             <Grid item xs={10}>
               <Typography>Access Level</Typography>
 
-
-              <FormControl> 
-      <FormLabel id="demo-row-radio-buttons-group-label">Choose anyone</FormLabel>
-      <RadioGroup
-        row
-        aria-labelledby="demo-row-radio-buttons-group-label"
-        {...register("fixedLever")}
-      > 
-        <FormControlLabel value={true} control={<Radio />} label="Work with fixed levers" />
-        <FormControlLabel value={false} control={<Radio />} label="Work with customizable levers" />
-        </RadioGroup>
-        </FormControl>
-        
-
-
+              <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">
+                  Choose anyone
+                </FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  {...register("fixedLever")}
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label="Work with fixed levers"
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio />}
+                    label="Work with customizable levers"
+                  />
+                </RadioGroup>
+              </FormControl>
 
               <Paper elevation={3}>
                 <Grid container>
@@ -622,25 +614,32 @@ const errorLength = Object.keys(errors).length;
                         </MenuItem>
                       ))}
                     </TextField>
-                   
-                 
                   </Grid>
                   <Grid item xs={9} className={"grid"}>
                     <TextField
                       {...register("chargeCode", {
                         required: true,
                         maxLength: 15,
-                      
                       })}
                       required
                       id="outlined-required"
                       label="Charge Code"
-                    
                       type="number"
                     />
-                    {errors.chargeCode && errors.chargeCode.type === "required" && <span>This field is required</span>  }
-                  {errors.chargeCode && errors.chargeCode.type === "maxLength" && <span>Max length exceeded. Kindly enter 25 chars only.</span> }
-                  {errors.chargeCode && errors.chargeCode.type === "minLength" && <span>Min length 3 chars required.</span> }
+                    {errors.chargeCode &&
+                      errors.chargeCode.type === "required" && (
+                        <span>This field is required</span>
+                      )}
+                    {errors.chargeCode &&
+                      errors.chargeCode.type === "maxLength" && (
+                        <span>
+                          Max length exceeded. Kindly enter 25 chars only.
+                        </span>
+                      )}
+                    {errors.chargeCode &&
+                      errors.chargeCode.type === "minLength" && (
+                        <span>Min length 3 chars required.</span>
+                      )}
                   </Grid>
                 </Grid>
               </Paper>
@@ -648,7 +647,18 @@ const errorLength = Object.keys(errors).length;
                 Note: If you are unsure about the selected levers, you can go
                 back and edit the lever selection
               </small>
+
+
+              <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+        <Alert onClose={handleCloseSnack} severity="error" sx={{ width: '100%' }}>
+        {Object.keys(errors).map((elem, index) => <> {" Kindly enter the following field values"}<small key={index+ elem}> {index +1} : {" "}{elem}</small> </>)}
+        </Alert>
+      </Snackbar>
+
+      
+             <small>  {Object.keys(errors).map((elem, index) => <> {" Kindly enter the following field values"}<small key={index+ elem}> {index +1} : {" "}{elem}</small> </>)} </small>
             </Grid>
+            
           </Grid>
 
           <Divider />
@@ -664,180 +674,204 @@ const errorLength = Object.keys(errors).length;
             }}
           >
             <Stack spacing={7} direction="row">
+              
+                <Button variant={"outlined"} onClick={handleCloseCancel}>
+                  Cancel
+                </Button>
 
+                {/* <Modal
+                  aria-labelledby="transition-modal-cancel"
+                  aria-describedby="transition-modal-description"
+                  open={close}
+                  onClose={handleClose}
+                  closeAfterTransition
+                  BackdropComponent={Backdrop}
+                  BackdropProps={{
+                    timeout: 1000,
+                  }}
+                >
+                  <Fade in={close}>
+                    <Box sx={style}>
+                
+                      <Typography
+                        id="transition-modal-cancel"
+                        variant="h6"
+                        component="h2"
+                      >
+                          All data entries will be cancelled
+                      </Typography>
+                      <Button variant={"contained"} onClick={handleCloseCancel}>
+                        Confirm cancel project
+                      </Button>
+                    </Box>
+                  </Fade>
+                </Modal> */}
+              
 
-
-
-
-            <Grid container>
-   
-   <Button variant={"outlined"} onClick={handleClose}>
-     Cancel
-   </Button>
-
-
- <Modal
-   aria-labelledby="transition-modal-title"
-   aria-describedby="transition-modal-description"
-   open={open}
-   onClose={handleClose}
-   closeAfterTransition
-   BackdropComponent={Backdrop}
-   BackdropProps={{
-     timeout: 1000,
-   }}
- >
-   <Fade in={open}>
-     <Box sx={style}>
-       <Typography id="transition-modal-title" variant="h6" component="h2">
-         Cancel project
-       </Typography>
-       <Button variant={"contained"} onClick={handleCloseCancel}>
-                 Confirm cancel project
-               </Button>
-
-
-  
-
-     </Box>
-   </Fade>
- </Modal>
-</Grid>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <Grid container>
-   
-
-  
-        <Button variant={"contained"} onClick={handleOpen} 
-        // disabled={errorLength !== 0 ? true : false}
-        disabled={!isValid}
-        >
-          Create Project
-        </Button>
-  
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 1000,
-        }}
-      >
-        <Fade in={open}>
-          <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-           
-           Create project
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-             All data entries will be cancelled
-        
-                <>
-                 
-                    <Typography variant="h3">{totalCount} Sectors selected </Typography>
-                    <Grid container>
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Agriculture :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {agriculture.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )}</Typography>)}
-                      </Grid>
-
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Industry :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {industry.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )} </Typography>)}
-                      </Grid>
-
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Sector :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {sector.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )} </Typography>)}
-                      </Grid>
-
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Test :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {test.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )} </Typography>)}
-                      </Grid>
-
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Transport :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {transport.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )} </Typography>)}
-                      </Grid>
-
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Power :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {power.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )} </Typography>)}
-                      </Grid>
-
-                      <Grid item xs={4}>
-                        <Typography variant="h6">Dummy :</Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                      {dummy.map((elem: any, index: number) => <Typography key={index + elem}>{ (elem.length === 0 ? "None selected in this category": elem + " ," )} </Typography>)}
-                      </Grid>
-                    </Grid>
-                    
-                    
-                    
-      
-                  These are the UUID selected for creating new project. You are
-                  going to create new project with all data provided.
-                  {JSON.stringify(formData)}
-                </>
             
-            </Typography>
-   
- 
-        
+                <Button
+                  variant={"contained"}
+                  // onClick={handleOpen}
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={ errorLength > 0  || disabledByDefaultValue === true  ? true : false}
+                  // disabled={ !isValid }
+                  // disabled={disabled}
+                >
+                  Create Project
+                </Button>
 
-              <Button variant={"contained"} onClick={handleCloseConfirm} type="submit">
-                Confirm
-              </Button>
+                <Modal
+                  aria-labelledby="transition-modal-cancel"
+                  aria-describedby="transition-modal-description"
+                  open={open}
+                  onClose={handleClose}
+                  closeAfterTransition
+                  BackdropComponent={Backdrop}
+                  BackdropProps={{
+                    timeout: 1000,
+                  }}
+                >
+                  <Fade in={open}>
+                    <Box sx={style}>
+                      <Typography
+                        id="transition-modal-create"
+                        variant="h6"
+                        component="h2"
+                      >
+                        Create project
+                      </Typography>
+                      
+                   
+                        <>
+                          <Typography variant="h3">
+                            {totalCount} Sectors selected{" "}
+                          </Typography>
+                          <Grid container>
+                            <Grid item xs={4}>
+                              <Typography variant="h6">
+                                Agriculture :
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {agriculture.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}
+                                </Typography>
+                              ))}
+                            </Grid>
 
-          </Box>
-        </Fade>
-      </Modal>
-    </Grid>
+                            <Grid item xs={4}>
+                              <Typography variant="h6">Industry :</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {industry.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}{" "}
+                                </Typography>
+                              ))}
+                            </Grid>
 
+                            <Grid item xs={4}>
+                              <Typography variant="h6">Sector :</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {sector.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}{" "}
+                                </Typography>
+                              ))}
+                            </Grid>
+
+                            <Grid item xs={4}>
+                              <Typography variant="h6">Test :</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {test.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}{" "}
+                                </Typography>
+                              ))}
+                            </Grid>
+
+                            <Grid item xs={4}>
+                              <Typography variant="h6">Transport :</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {transport.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}{" "}
+                                </Typography>
+                              ))}
+                            </Grid>
+
+                            <Grid item xs={4}>
+                              <Typography variant="h6">Power :</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {power.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}{" "}
+                                </Typography>
+                              ))}
+                            </Grid>
+
+                            <Grid item xs={4}>
+                              <Typography variant="h6">Dummy :</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {dummy.map((elem: any, index: number) => (
+                                <Typography key={index + elem}>
+                                  {elem.length === 0
+                                    ? "None selected in this category"
+                                    : elem + " ,"}{" "}
+                                </Typography>
+                              ))}
+                            </Grid>
+                          </Grid>
+                          <Typography
+                        id="transition-modal-description"
+                        sx={{ mt: 2 }}
+                      >
+                          These are the UUID selected for creating new project.
+                          You are going to create new project with all data
+                          provided.
+
+                          {/* {JSON.stringify(formData)} */}
+                          
+                          </Typography>
+                        </>
+                      
+
+                      <Button
+                        variant={"contained"}
+                        onClick={handleCloseConfirm}
+                       
+                        type="submit"
+                      >
+                        Confirm
+                      </Button>
+                    </Box>
+                  </Fade>
+                </Modal>
+              
             </Stack>
           </Box>
 
-
-          <Button type="submit" onClick={handleSubmit(onSubmit)}>
+          {/* <Button type="submit" onClick={handleSubmit(onSubmit)}>
             done
-          </Button>
+          </Button> */}
         </form>
       </Box>
     </>
@@ -845,6 +879,29 @@ const errorLength = Object.keys(errors).length;
 };
 
 export default Form;
+
+// formik management
+//   const formik = useFormik({
+//   initialValues: {
+//     projectName: '',
+//     projectType: '',
+//     textarea: '',
+//     dateFrom: '',
+//     dateTo: '',
+//     clientName: '',
+//     collaborator: '',
+//     engagementDirector: '',
+//     projectLevel: '',
+//     fixedLever: '',
+//     customizedLever: '',
+//     budget: '',
+//     chargeCode: '',
+//   },
+//   validate,
+//   onSubmit: values => {
+//     alert(JSON.stringify(values, null, 2));
+//   },
+// });
 
 // Connect your component with redux
 // connect(
@@ -967,4 +1024,98 @@ export default Form;
 //       <button type="submit">Submit</button>
 //     </form>
 //   );
+// };
+
+// all imports optional
+// import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
+// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker/index.d";
+// import ModalForm from "./Modal";
+// import AdapterDateFns from '@mui/lab/AdapterDateFns';
+// import { useDispatch, useSelector } from "react-redux";
+// import { create } from "yup/lib/Reference";
+
+// const handleChangeProject = (event: React.ChangeEvent<HTMLInputElement>) => {
+//   setProject(event.target.value);
+// };
+
+// console.log(formData, "formData ....");
+
+// const projectName = formData.projectName;
+// const projectType = formData.projectType;
+// const textarea = formData.textarea;
+// const dateFrom = formData.dateFrom;
+// const dateTo = formData.dateTo;
+// const clientName = formData.clientName;
+// const collaborator = formData.collaborator;
+// const projectLevel = formData.Level;
+// const engagementDirector = formData.engagementDirector;
+// const description = formData.description;
+// const fixedLever = formData.fixedLever;
+// const customizedLever = formData.customizedLever;
+// const budget = formData.budget;
+// const chargeCode = formData.chargeCode;
+
+// interface store {
+//   sectors: any;
+// }
+// import { UpdateStore } from "./updateStore";
+
+// interface errorProps {
+//   projectName: string;
+//       projectType: string;
+//       textarea: string;
+//       dateFrom: string;
+//       dateTo: string;
+//       clientName: string;
+//       collaborator: string;
+//       engagementDirector: string;
+//       projectLevel: string;
+//       fixedLever: string;
+//       customizedLever: string;
+//       budget: string;
+//       chargeCode: string;
+// }
+// const validate  = (values:  errorProps  ) => {
+//   let errors = {
+//     projectName: '',
+//       projectType: '',
+//       textarea: '',
+//       dateFrom: '',
+//       dateTo: '',
+//       clientName: '',
+//       collaborator: '',
+//       engagementDirector: '',
+//       projectLevel: '',
+//       fixedLever: '',
+//       customizedLever: '',
+//       budget: '',
+//       chargeCode: '',
+//   };
+
+//   if (!values.projectName) {
+//     errors.projectName = 'Required';
+//   } else if (values.projectName.length > 15) {
+//     errors.projectName = 'Must be 15 characters or less';
+//   }
+
+//   if (!values.textarea) {
+//     errors.textarea = 'Required';
+//   } else if (values.textarea.length < 150) {
+//     errors.textarea = 'Must be 150 characters or more';
+//   }
+
+//   if (!values.clientName) {
+//     errors.clientName = 'Required';
+//   } else if (values.clientName.length > 20) {
+//     errors.clientName = 'Must be 20 characters or less';
+//   }
+
+//   // if (!values.email) {
+//   //   errors.email = 'Required';
+//   // } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+//   //   errors.email = 'Invalid email address';
+//   // }
+
+//   return errors;
 // };

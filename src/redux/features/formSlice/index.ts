@@ -14,7 +14,7 @@ export interface formState {
     fixedLever: boolean;
     customizedLever: boolean;
     budget: string;
-    chargeCode: Number;
+    chargeCode: string | number;
   
 }
 
@@ -32,7 +32,7 @@ const initialState: formState = {
   fixedLever: false,
   customizedLever: false,
   budget: '',
-  chargeCode: 1,
+  chargeCode: '',
 };
 
 
