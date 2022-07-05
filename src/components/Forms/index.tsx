@@ -137,9 +137,6 @@ const Form = () => {
     dispatch(registerTextarea(data.textarea));
     dispatch(registerDateFrom(new Date(data.dateFrom)));
     dispatch(registerDateTo(data.dateTo));
-    // dispatch(registerDateTo(JSON.parse(data.dateFrom)));
-    // dispatch(registerDateTo(JSON.parse(data.dateTo)));
-    
     dispatch(registerClientName(data.clientName));
     dispatch(registerCollaborator(data.collaborator));
     dispatch(registerEngagementDirector(data.engagementDirector));
@@ -375,13 +372,14 @@ const Form = () => {
                     onChange={(date: Date) => setStartDate(date)}
                     dateFormat={"dd/MM/yyyy"}
                     filterDate={(date: Date) =>
-                      date.getDate()! <= new Date().getDate() &&
+                      // date.getDate()! <= new Date().getDate() &&
                       date.getDay() !== 0 &&
                       date.getDay() !== 6 &&
                       date.getFullYear()! <= new Date().getFullYear() &&
                       date.getMonth() !<= new Date().getMonth()
                     }
                     isClearable
+                    maxDate={new Date()}
                     ariaLabelledBy="Pick start date"
                     showYearDropdown
                     closeOnScroll={true}
@@ -405,13 +403,14 @@ const Form = () => {
                     onChange={(date: Date) => setEndDate(date)}
                     dateFormat={"dd/MM/yyyy"}
                     filterDate={(date: Date) =>
-                      date.getDate() !>= new Date().getDate() &&
+                      // date.getDate() !>= new Date().getDate() &&
                       date.getDay() !== 0 &&
                       date.getDay() !== 6 &&
                       date.getFullYear()! >= new Date().getFullYear() &&
                       date.getMonth() !>= new Date().getMonth()
                     }
                     isClearable
+                    minDate={new Date()}
                     ariaLabelledBy="Pick end date"
                     showYearDropdown
                     closeOnScroll={true}
