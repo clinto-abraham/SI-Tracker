@@ -43,6 +43,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import "react-datepicker/dist/react-datepicker.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DatePicker from "react-datepicker";
+import { Label } from "@mui/icons-material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -209,7 +210,7 @@ const Form = () => {
     errors,
   ]);
 
-  console.log(errors, errorLength, isValid, hookValue.dateFrom);
+  // console.log("errors",errors,"errorLength", errorLength,"isValid", isValid,"hookValue", hookValue);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -299,7 +300,6 @@ const Form = () => {
                     })}
                     id="outlined-required"
                     label="Project Name"
-                    // name="projectName"
                   />
                   <span>
                     {errors.projectName?.type === "required" &&
