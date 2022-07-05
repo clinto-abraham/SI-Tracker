@@ -43,6 +43,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import "react-datepicker/dist/react-datepicker.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DatePicker from "react-datepicker";
+import { Label } from "@mui/icons-material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -81,11 +82,11 @@ const projectTypes = [
     label: "LOP",
   },
   {
-    value: "Initial",
+    value: "erection",
     label: "Erection",
   },
   {
-    value: "Mid stage",
+    value: "Commissioning",
     label: "Commissioning",
   },
 ];
@@ -101,15 +102,16 @@ const Form = () => {
     setOpenSnack(true);
   };
 
-  const handleCloseSnack = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleCloseSnack = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
 
     setOpenSnack(false);
   };
-
-
 
   const {
     projectName,
@@ -130,12 +132,14 @@ const Form = () => {
   const dispatch = useAppDispatch();
 
   const updateStore = (data: any) => {
-    // console.log("updateStore function is hit..", data.projectName, "data.. of updatestore is passed on onSubmit", data)
     dispatch(registerProjectName(data.projectName));
     dispatch(registerProjectType(data.projectType));
     dispatch(registerTextarea(data.textarea));
-    dispatch(registerDateFrom(data.dateFrom));
+    dispatch(registerDateFrom(new Date(data.dateFrom)));
     dispatch(registerDateTo(data.dateTo));
+    // dispatch(registerDateTo(JSON.parse(data.dateFrom)));
+    // dispatch(registerDateTo(JSON.parse(data.dateTo)));
+    
     dispatch(registerClientName(data.clientName));
     dispatch(registerCollaborator(data.collaborator));
     dispatch(registerEngagementDirector(data.engagementDirector));
@@ -146,21 +150,13 @@ const Form = () => {
     dispatch(registerChargeCode(data.chargeCode));
   };
 
-  const [valueDate, setValueDate] = React.useState<Date | null>(
-    new Date("2022-08-18T21:11:54")
-  );
-
-  const handleChangeDate = (newValue: Date | null) => {
-    setValueDate(newValue);
-  };
-
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
 
   const handleChangeCurrency = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(event.target.value);
   };
-  
+
   const {
     register,
     handleSubmit,
@@ -189,29 +185,35 @@ const Form = () => {
   const onSubmit = (data: any) => {
     localStorage.setItem("projectInfo", JSON.stringify(data));
     updateStore(data);
-    handleOpen()
-    
+    handleOpen();
   };
 
   const errorLength = Object.keys(errors).length;
-  const [disabledByDefaultValue, setDisabledByDefaultValue] = React.useState(false)
+  const [disabledByDefaultValue, setDisabledByDefaultValue] =
+    React.useState(false);
 
-
-const hookValue = getValues()
-if (hookValue.projectName ===   undefined || null) {
-  setDisabledByDefaultValue(!disabledByDefaultValue)
-  
-}
-React.useEffect(() => {
-  if(Object.keys(errors).length > 0) {
-    handleClickSnack()
+  const hookValue = getValues();
+  if (hookValue.projectName === undefined || null) {
+    setDisabledByDefaultValue(!disabledByDefaultValue);
   }
-},[hookValue.chargeCode, hookValue.projectName, hookValue.projectType, hookValue.clientName, hookValue.collaborator, hookValue.textarea])
+  React.useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      handleClickSnack();
+    }
+  }, [
+    hookValue.chargeCode,
+    hookValue.projectName,
+    hookValue.projectType,
+    hookValue.clientName,
+    hookValue.collaborator,
+    hookValue.textarea,
+    hookValue.dateFrom,
+    hookValue.dateTo,
+  ]);
 
-  console.log(errors, errorLength, isValid, hookValue.projectName)
+  console.log(errors, errorLength, isValid, hookValue.dateFrom);
 
   const [open, setOpen] = React.useState(false);
-  // const [close, setClose] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -224,8 +226,6 @@ React.useEffect(() => {
     setOpen(false);
     navigate("/project-data");
     handleSubmit(onSubmit);
-    // const data = localStorage.getItem("projectInfo");
-    //  onSubmit(UpdateStore(data));
   };
 
   const uuidSelected = useAppSelector((state: any) => state.sectors);
@@ -244,7 +244,6 @@ React.useEffect(() => {
     transport.length +
     power.length +
     dummy.length;
-  const formData = useAppSelector((state: any) => state.project);
 
   return (
     <>
@@ -300,10 +299,10 @@ React.useEffect(() => {
                       minLength: 3,
                       maxLength: 150,
                     })}
-                    required
+                  
                     id="outlined-required"
                     label="Project Name"
-                    name="projectName"
+                    // name="projectName"
                   />
                   <span>
                     {errors.projectName?.type === "required" &&
@@ -348,7 +347,7 @@ React.useEffect(() => {
                     className={"textarea"}
                     aria-label="maximum height"
                     minRows={7}
-                    name={"textarea"}
+                    // name={"textarea"}
                     placeholder="Give brief in max 100 chars and min 10 chars"
                     style={{ width: 440 }}
                   />
@@ -367,76 +366,64 @@ React.useEffect(() => {
                 </Grid>
 
                 <Grid item xs={3} className={"grid"}>
+                <label>Start date</label>
                   <DatePicker
+                    {...register("dateFrom", {
+                      required: true,
+                    })}
                     selected={startDate}
                     onChange={(date: Date) => setStartDate(date)}
                     dateFormat={"dd/MM/yyyy"}
                     filterDate={(date: Date) =>
-                      date.getDate() !== 6 && date.getDate() !== 0
+                      date.getDate()! <= new Date().getDate() &&
+                      date.getDay() !== 0 &&
+                      date.getDay() !== 6 &&
+                      date.getFullYear()! <= new Date().getFullYear() &&
+                      date.getMonth() !<= new Date().getMonth()
                     }
                     isClearable
-                    ariaLabelledBy="Pick date"
+                    ariaLabelledBy="Pick start date"
                     showYearDropdown
+                    closeOnScroll={true}
                     className={"date"}
                   />
+                   <span>
+                    {errors.dateFrom?.type === "required" &&
+                      "Start date is required"}{" "}
+                  </span>
                 </Grid>
                 <Grid item xs={9} className={"grid"}>
+                  {/* <DatePicker selected={startDate}  maxDate={new Date()} className="form-control" onChange={(date : Date) => setStartDate(date)} /> */}
 
-
-                {/* <DatePicker selected={startDate}  maxDate={new Date()} className="form-control" onChange={(date : Date) => setStartDate(date)} /> */}
-
-{/* <DatePicker selected={endDate}  maxDate={new Date()} className="form-control"  onChange={(date) => setEndDate(date)} />  */}
-
-
+                  {/* <DatePicker selected={endDate}  maxDate={new Date()} className="form-control"  onChange={(date) => setEndDate(date)} />  */}
+                  <label>End date</label>
                   <DatePicker
+                  {...register("dateTo", {
+                    required: true,
+                  })}
                     selected={endDate}
                     onChange={(date: Date) => setEndDate(date)}
                     dateFormat={"dd/MM/yyyy"}
-                    // filterDate={(date: Date) =>
-                    //   date.getDate() >= date.getDate() +30 &&
-                    //   date.getDate() !== 0
-                    // }
                     filterDate={(date: Date) =>
-                      date.getDate() !== 6 && date.getDate() !== 0
+                      date.getDate() !>= new Date().getDate() &&
+                      date.getDay() !== 0 &&
+                      date.getDay() !== 6 &&
+                      date.getFullYear()! >= new Date().getFullYear() &&
+                      date.getMonth() !>= new Date().getMonth()
                     }
                     isClearable
-                    ariaLabelledBy="Pick date"
+                    ariaLabelledBy="Pick end date"
                     showYearDropdown
+                    closeOnScroll={true}
                     className={"date"}
                   />
+                   <span>
+                    {errors.dateTo?.type === "required" &&
+                      "End date is required"}{" "}
+                  </span>
                 </Grid>
               </Grid>
             </Grid>
-
-            {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-           <Grid item xs={3} className={'grid'}>
-           <DesktopDatePicker
-          label="Date desktop"
-          inputFormat="MM/dd/yyyy"
-          value={valueDate}
-          onChange={handleChangeDate}
-          renderInput={(params: JSX.IntrinsicAttributes & TextFieldProps) => <TextField {...params} />}
-        />
-
-                <DatePicker
-                  value={valueDate}
-                  onChange={(newValue) => {
-                    setValueDate(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-                </Grid>
-                <Grid item xs={9} className={'grid'}>
-                <DatePicker
-                  value={valueDate}
-                  onChange={(newValue) => {
-                    setValueDate(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              
-            </Grid>
-            </LocalizationProvider> */}
           </Grid>
           <Divider />
           <Grid container alignItems="center">
@@ -648,17 +635,43 @@ React.useEffect(() => {
                 back and edit the lever selection
               </small>
 
+              <Snackbar
+                open={openSnack}
+                autoHideDuration={6000}
+                onClose={handleCloseSnack}
+              >
+                <Alert
+                  onClose={handleCloseSnack}
+                  severity="error"
+                  sx={{ width: "100%" }}
+                >
+                  {Object.keys(errors).map((elem, index) => (
+                    <>
+                      {" "}
+                      {" Kindly enter the following field values"}
+                      <small key={index + elem}>
+                        {" "}
+                        {index + 1} : {elem}
+                      </small>{" "}
+                    </>
+                  ))}
+                </Alert>
+              </Snackbar>
 
-              <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
-        <Alert onClose={handleCloseSnack} severity="error" sx={{ width: '100%' }}>
-        {Object.keys(errors).map((elem, index) => <> {" Kindly enter the following field values"}<small key={index+ elem}> {index +1} : {" "}{elem}</small> </>)}
-        </Alert>
-      </Snackbar>
-
-      
-             <small>  {Object.keys(errors).map((elem, index) => <> {" Kindly enter the following field values"}<small key={index+ elem}> {index +1} : {" "}{elem}</small> </>)} </small>
+              <small>
+                {" "}
+                {Object.keys(errors).map((elem, index) => (
+                  <>
+                    {" "}
+                    {" Kindly enter the following field values"}
+                    <small key={index + elem}>
+                      {" "}
+                      {index + 1} : {elem}
+                    </small>{" "}
+                  </>
+                ))}{" "}
+              </small>
             </Grid>
-            
           </Grid>
 
           <Divider />
@@ -674,12 +687,11 @@ React.useEffect(() => {
             }}
           >
             <Stack spacing={7} direction="row">
-              
-                <Button variant={"outlined"} onClick={handleCloseCancel}>
-                  Cancel
-                </Button>
+              <Button variant={"outlined"} onClick={handleCloseCancel}>
+                Cancel
+              </Button>
 
-                {/* <Modal
+              {/* <Modal
                   aria-labelledby="transition-modal-cancel"
                   aria-describedby="transition-modal-description"
                   open={close}
@@ -706,166 +718,160 @@ React.useEffect(() => {
                     </Box>
                   </Fade>
                 </Modal> */}
-              
 
-            
-                <Button
-                  variant={"contained"}
-                  // onClick={handleOpen}
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={ errorLength > 0  || disabledByDefaultValue === true  ? true : false}
-                  // disabled={ !isValid }
-                  // disabled={disabled}
-                >
-                  Create Project
-                </Button>
+              <Button
+                variant={"contained"}
+                // onClick={handleOpen}
+                onClick={handleSubmit(onSubmit)}
+                disabled={
+                  errorLength > 0 || disabledByDefaultValue === true
+                    ? true
+                    : false
+                }
+                // disabled={ !isValid }
+                // disabled={disabled}
+              >
+                Create Project
+              </Button>
 
-                <Modal
-                  aria-labelledby="transition-modal-cancel"
-                  aria-describedby="transition-modal-description"
-                  open={open}
-                  onClose={handleClose}
-                  closeAfterTransition
-                  BackdropComponent={Backdrop}
-                  BackdropProps={{
-                    timeout: 1000,
-                  }}
-                >
-                  <Fade in={open}>
-                    <Box sx={style}>
-                      <Typography
-                        id="transition-modal-create"
-                        variant="h6"
-                        component="h2"
-                      >
-                        Create project
+              <Modal
+                aria-labelledby="transition-modal-cancel"
+                aria-describedby="transition-modal-description"
+                open={open}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                  timeout: 1000,
+                }}
+              >
+                <Fade in={open}>
+                  <Box sx={style}>
+                    <Typography
+                      id="transition-modal-create"
+                      variant="h6"
+                      component="h2"
+                    >
+                      Create project
+                    </Typography>
+
+                    <>
+                      <Typography variant="h3">
+                        {totalCount} Sectors selected{" "}
                       </Typography>
-                      
-                   
-                        <>
-                          <Typography variant="h3">
-                            {totalCount} Sectors selected{" "}
-                          </Typography>
-                          <Grid container>
-                            <Grid item xs={4}>
-                              <Typography variant="h6">
-                                Agriculture :
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {agriculture.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}
-                                </Typography>
-                              ))}
-                            </Grid>
+                      <Grid container>
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Agriculture :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {agriculture.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}
+                            </Typography>
+                          ))}
+                        </Grid>
 
-                            <Grid item xs={4}>
-                              <Typography variant="h6">Industry :</Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {industry.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}{" "}
-                                </Typography>
-                              ))}
-                            </Grid>
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Industry :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {industry.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}{" "}
+                            </Typography>
+                          ))}
+                        </Grid>
 
-                            <Grid item xs={4}>
-                              <Typography variant="h6">Sector :</Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {sector.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}{" "}
-                                </Typography>
-                              ))}
-                            </Grid>
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Sector :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {sector.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}{" "}
+                            </Typography>
+                          ))}
+                        </Grid>
 
-                            <Grid item xs={4}>
-                              <Typography variant="h6">Test :</Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {test.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}{" "}
-                                </Typography>
-                              ))}
-                            </Grid>
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Test :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {test.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}{" "}
+                            </Typography>
+                          ))}
+                        </Grid>
 
-                            <Grid item xs={4}>
-                              <Typography variant="h6">Transport :</Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {transport.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}{" "}
-                                </Typography>
-                              ))}
-                            </Grid>
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Transport :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {transport.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}{" "}
+                            </Typography>
+                          ))}
+                        </Grid>
 
-                            <Grid item xs={4}>
-                              <Typography variant="h6">Power :</Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {power.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}{" "}
-                                </Typography>
-                              ))}
-                            </Grid>
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Power :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {power.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}{" "}
+                            </Typography>
+                          ))}
+                        </Grid>
 
-                            <Grid item xs={4}>
-                              <Typography variant="h6">Dummy :</Typography>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {dummy.map((elem: any, index: number) => (
-                                <Typography key={index + elem}>
-                                  {elem.length === 0
-                                    ? "None selected in this category"
-                                    : elem + " ,"}{" "}
-                                </Typography>
-                              ))}
-                            </Grid>
-                          </Grid>
-                          <Typography
+                        <Grid item xs={4}>
+                          <Typography variant="h6">Dummy :</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          {dummy.map((elem: any, index: number) => (
+                            <Typography key={index + elem}>
+                              {elem.length === 0
+                                ? "None selected in this category"
+                                : elem + " ,"}{" "}
+                            </Typography>
+                          ))}
+                        </Grid>
+                      </Grid>
+                      <Typography
                         id="transition-modal-description"
                         sx={{ mt: 2 }}
                       >
-                          These are the UUID selected for creating new project.
-                          You are going to create new project with all data
-                          provided.
+                        These are the UUID selected for creating new project.
+                        You are going to create new project with all data
+                        provided.
+                        {/* {JSON.stringify(formData)} */}
+                      </Typography>
+                    </>
 
-                          {/* {JSON.stringify(formData)} */}
-                          
-                          </Typography>
-                        </>
-                      
-
-                      <Button
-                        variant={"contained"}
-                        onClick={handleCloseConfirm}
-                       
-                        type="submit"
-                      >
-                        Confirm
-                      </Button>
-                    </Box>
-                  </Fade>
-                </Modal>
-              
+                    <Button
+                      variant={"contained"}
+                      onClick={handleCloseConfirm}
+                      type="submit"
+                    >
+                      Confirm
+                    </Button>
+                  </Box>
+                </Fade>
+              </Modal>
             </Stack>
           </Box>
 
@@ -1119,3 +1125,33 @@ export default Form;
 
 //   return errors;
 // };
+
+//  <LocalizationProvider dateAdapter={AdapterDateFns}>
+//            <Grid item xs={3} className={'grid'}>
+//            <DesktopDatePicker
+//           label="Date desktop"
+//           inputFormat="MM/dd/yyyy"
+//           value={valueDate}
+//           onChange={handleChangeDate}
+//           renderInput={(params: JSX.IntrinsicAttributes & TextFieldProps) => <TextField {...params} />}
+//         />
+
+//                 <DatePicker
+//                   value={valueDate}
+//                   onChange={(newValue) => {
+//                     setValueDate(newValue);
+//                   }}
+//                   renderInput={(params) => <TextField {...params} />}
+//                 />
+//                 </Grid>
+//                 <Grid item xs={9} className={'grid'}>
+//                 <DatePicker
+//                   value={valueDate}
+//                   onChange={(newValue) => {
+//                     setValueDate(newValue);
+//                   }}
+//                   renderInput={(params) => <TextField {...params} />}
+//                 />
+              
+//             </Grid>
+//             </LocalizationProvider> 
