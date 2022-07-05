@@ -43,7 +43,6 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import "react-datepicker/dist/react-datepicker.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DatePicker from "react-datepicker";
-import { Label } from "@mui/icons-material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -145,6 +144,7 @@ const Form = () => {
     dispatch(registerCustomizedLever(data.customizedLever));
     dispatch(registerBudget(data.budget));
     dispatch(registerChargeCode(data.chargeCode));
+    console.log(data);
   };
 
   const [startDate, setStartDate] = React.useState(new Date());
@@ -206,6 +206,7 @@ const Form = () => {
     hookValue.textarea,
     hookValue.dateFrom,
     hookValue.dateTo,
+    errors,
   ]);
 
   console.log(errors, errorLength, isValid, hookValue.dateFrom);
@@ -296,7 +297,6 @@ const Form = () => {
                       minLength: 3,
                       maxLength: 150,
                     })}
-                  
                     id="outlined-required"
                     label="Project Name"
                     // name="projectName"
@@ -314,6 +314,7 @@ const Form = () => {
                     id="outlined-select-currency"
                     select
                     label="Project type"
+                    value={project}
                     helperText="Please select project type"
                   >
                     {projectTypes.map((option) => (
@@ -363,7 +364,7 @@ const Form = () => {
                 </Grid>
 
                 <Grid item xs={3} className={"grid"}>
-                <label>Start date</label>
+                  <label>Start date</label>
                   <DatePicker
                     {...register("dateFrom", {
                       required: true,
@@ -376,7 +377,7 @@ const Form = () => {
                       date.getDay() !== 0 &&
                       date.getDay() !== 6 &&
                       date.getFullYear()! <= new Date().getFullYear() &&
-                      date.getMonth() !<= new Date().getMonth()
+                      date.getMonth()! <= new Date().getMonth()
                     }
                     isClearable
                     maxDate={new Date()}
@@ -385,20 +386,17 @@ const Form = () => {
                     closeOnScroll={true}
                     className={"date"}
                   />
-                   <span>
+                  <span>
                     {errors.dateFrom?.type === "required" &&
                       "Start date is required"}{" "}
                   </span>
                 </Grid>
                 <Grid item xs={9} className={"grid"}>
-                  {/* <DatePicker selected={startDate}  maxDate={new Date()} className="form-control" onChange={(date : Date) => setStartDate(date)} /> */}
-
-                  {/* <DatePicker selected={endDate}  maxDate={new Date()} className="form-control"  onChange={(date) => setEndDate(date)} />  */}
                   <label>End date</label>
                   <DatePicker
-                  {...register("dateTo", {
-                    required: true,
-                  })}
+                    {...register("dateTo", {
+                      required: true,
+                    })}
                     selected={endDate}
                     onChange={(date: Date) => setEndDate(date)}
                     dateFormat={"dd/MM/yyyy"}
@@ -407,7 +405,7 @@ const Form = () => {
                       date.getDay() !== 0 &&
                       date.getDay() !== 6 &&
                       date.getFullYear()! >= new Date().getFullYear() &&
-                      date.getMonth() !>= new Date().getMonth()
+                      date.getMonth()! >= new Date().getMonth()
                     }
                     isClearable
                     minDate={new Date()}
@@ -416,7 +414,7 @@ const Form = () => {
                     closeOnScroll={true}
                     className={"date"}
                   />
-                   <span>
+                  <span>
                     {errors.dateTo?.type === "required" &&
                       "End date is required"}{" "}
                   </span>
@@ -656,20 +654,6 @@ const Form = () => {
                   ))}
                 </Alert>
               </Snackbar>
-
-              <small>
-                {" "}
-                {Object.keys(errors).map((elem, index) => (
-                  <>
-                    {" "}
-                    {" Kindly enter the following field values"}
-                    <small key={index + elem}>
-                      {" "}
-                      {index + 1} : {elem}
-                    </small>{" "}
-                  </>
-                ))}{" "}
-              </small>
             </Grid>
           </Grid>
 
@@ -689,34 +673,6 @@ const Form = () => {
               <Button variant={"outlined"} onClick={handleCloseCancel}>
                 Cancel
               </Button>
-
-              {/* <Modal
-                  aria-labelledby="transition-modal-cancel"
-                  aria-describedby="transition-modal-description"
-                  open={close}
-                  onClose={handleClose}
-                  closeAfterTransition
-                  BackdropComponent={Backdrop}
-                  BackdropProps={{
-                    timeout: 1000,
-                  }}
-                >
-                  <Fade in={close}>
-                    <Box sx={style}>
-                
-                      <Typography
-                        id="transition-modal-cancel"
-                        variant="h6"
-                        component="h2"
-                      >
-                          All data entries will be cancelled
-                      </Typography>
-                      <Button variant={"contained"} onClick={handleCloseCancel}>
-                        Confirm cancel project
-                      </Button>
-                    </Box>
-                  </Fade>
-                </Modal> */}
 
               <Button
                 variant={"contained"}
@@ -857,7 +813,6 @@ const Form = () => {
                         These are the UUID selected for creating new project.
                         You are going to create new project with all data
                         provided.
-                        {/* {JSON.stringify(formData)} */}
                       </Typography>
                     </>
 
@@ -884,6 +839,13 @@ const Form = () => {
 };
 
 export default Form;
+
+
+
+
+
+
+
 
 // formik management
 //   const formik = useFormik({
@@ -1151,6 +1113,6 @@ export default Form;
 //                   }}
 //                   renderInput={(params) => <TextField {...params} />}
 //                 />
-              
+
 //             </Grid>
-//             </LocalizationProvider> 
+//             </LocalizationProvider>
